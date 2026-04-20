@@ -1,0 +1,84 @@
+<div class="page-transition">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 2px solid var(--neon-teal); padding-bottom: 20px;">
+        <div>
+            <h1 style="color: var(--neon-teal); margin: 0; font-family: 'Space Grotesk';">Extraction Report: {{ analysis[2] }}</h1>
+            <p style="color: var(--text-dim); margin: 5px 0;">TIMESTAMP: {{ analysis[8] }} | NEURAL CONFIDENCE: 98.4%</p>
+        </div>
+        <div style="text-align: right;">
+            <span class="badge" style="background: rgba(0, 255, 195, 0.1); color: var(--neon-teal); border: 1px solid var(--neon-teal); padding: 5px 15px; font-size: 0.7rem;">CERTIFIED ASSET</span>
+        </div>
+    </div>
+
+    <!-- Extraction Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
+        <div class="glass-panel" style="text-align: center; border-color: var(--neon-blue); background: rgba(0, 212, 255, 0.02);">
+            <div style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Productivity Index</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: var(--neon-blue); font-family: 'Space Grotesk'; margin: 5px 0;">{{ "%.4f"|format(analysis[6]) }}</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim);">STB/D/PSI</div>
+        </div>
+        <div class="glass-panel" style="text-align: center; border-color: var(--warning); background: rgba(255, 170, 0, 0.02);">
+            <div style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Skin Factor</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: var(--warning); font-family: 'Space Grotesk'; margin: 5px 0;">{{ analysis[7] }}</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim);">BOREHOLE DAMAGE</div>
+        </div>
+        <div class="glass-panel" style="text-align: center; background: rgba(255, 255, 255, 0.01);">
+            <div style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">API Gravity</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: var(--text-primary); font-family: 'Space Grotesk'; margin: 5px 0;">{{ analysis[11] }}°</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim);">SWEET CRUDE</div>
+        </div>
+        <div class="glass-panel" style="text-align: center; background: rgba(255, 255, 255, 0.01);">
+            <div style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Target Depth</div>
+            <div style="font-size: 1.8rem; font-weight: bold; color: var(--text-primary); font-family: 'Space Grotesk'; margin: 5px 0;">{{ analysis[10] }}m</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim);">MEASURED DEPTH</div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+        <!-- Left: Technical Insight -->
+        <div class="glass-panel" style="padding: 30px; border-left: 4px solid var(--neon-teal); background: rgba(0, 255, 195, 0.01);">
+            <h3 style="color: var(--neon-teal); margin-bottom: 15px; font-size: 1.2rem;"><i class="fas fa-brain"></i> Neural Diagnostic Insights</h3>
+            <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 8px; font-family: 'Roboto Mono'; line-height: 1.8; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.05);">
+                {{ analysis[15] or "Analyzing subsurface patterns... diagnostic complete." }}
+            </div>
+            
+            <h4 style="margin-top: 40px; color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px;">Extraction Metadata</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; font-size: 0.9rem;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0;">
+                    <span style="color: var(--text-dim);">Initial Flow Rate</span>
+                    <span style="font-weight: bold;">{{ analysis[3] }} BPD</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0;">
+                    <span style="color: var(--text-dim);">Initial Pressure</span>
+                    <span style="font-weight: bold;">{{ analysis[4] }} PSI</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0;">
+                    <span style="color: var(--text-dim);">Final Flow Pressure</span>
+                    <span style="font-weight: bold;">{{ analysis[5] }} PSI</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 0;">
+                    <span style="color: var(--text-dim);">Water Cut</span>
+                    <span style="font-weight: bold; color: var(--warning);">{{ analysis[13] }}%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="glass-panel" style="background: rgba(255, 215, 0, 0.03); border-color: rgba(255, 215, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+            <div style="color: #FFD700; font-size: 3.5rem; margin-bottom: 25px;">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h3 style="color: #FFD700; margin-bottom: 12px; font-size: 1.3rem;">Asset Financial Audit</h3>
+            <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; margin-bottom: 35px;">
+                Proceed to full commercial viability suite. Includes CAPEX/OPEX breakdowns, NPV at 10%, and formation-aware BOM.
+            </p>
+            <button onclick="navigate(event, '/economics-audit/{{ analysis[0] }}')" class="cyber-btn" style="width: 100%; border-color: #FFD700; color: #FFD700; padding: 18px; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; background: rgba(255, 215, 0, 0.1);">
+                GENERATE ECONOMIC AUDIT
+            </button>
+            <div style="margin-top: 25px; width: 100%;">
+                <button onclick="navigate(event, '/analysis-hub')" class="cyber-btn" style="width: 100%; border-color: var(--text-dim); color: var(--text-dim); font-size: 0.8rem;">
+                    RETURN TO HUB
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

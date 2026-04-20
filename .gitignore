@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Massive Output Databases & Repositories
+well_analyses.db
+*.db
+*.sqlite3
+uploads/
+nltk_data/
+
+# Environments & Private Logic
+.env
+venv/
+env/
+.venv/
+*.bak_src
+*.bak
+_secure_backup/
+legacy/
+prototype_errors.log

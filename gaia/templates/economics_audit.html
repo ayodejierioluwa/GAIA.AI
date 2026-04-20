@@ -1,0 +1,120 @@
+<div class="page-transition">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; color: var(--neon-teal); margin: 0;">💰 Asset Economic Audit</h1>
+            <p style="color: var(--text-dim); letter-spacing: 1px;">FORMATION-AWARE CAPEX BREAKDOWN • v5.0 ECONOMIST</p>
+        </div>
+        <div class="glass-panel" style="text-align: right; padding: 10px 20px; border-color: var(--warning); background: rgba(255,171,0,0.05);">
+            <div style="font-size: 0.6rem; color: var(--text-dim); letter-spacing: 1px;">PREDICTED CAPEX (USD)</div>
+            <div style="font-size: 1.8rem; font-family: 'Space Grotesk'; color: var(--warning);">$ {{ "{:,.0f}".format(audit.capex_total) }}</div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 400px; gap: 30px;">
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+            <!-- Bill of Materials / Breakdown -->
+            <div class="glass-panel">
+                <h3 style="margin-bottom: 20px; color: var(--text-primary);"><i class="fas fa-list-ul"></i> Itemized Enquiry Breakdown</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);">
+                            <th style="text-align: left; padding: 12px;">Component</th>
+                            <th style="text-align: right; padding: 12px;">Est. Cost (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px;">Rig Operations ({{ audit.environment }})</td>
+                            <td style="text-align: right; padding: 12px; font-family: 'Roboto Mono';">$ {{ "{:,.2f}".format(audit.breakdown.rig_operations) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px;">Casing & Tubulars (Formation Mult: {{ audit.formation_complexity }})</td>
+                            <td style="text-align: right; padding: 12px; font-family: 'Roboto Mono';">$ {{ "{:,.2f}".format(audit.breakdown.casing_tubulars) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px;">Completion & Fluids</td>
+                            <td style="text-align: right; padding: 12px; font-family: 'Roboto Mono';">$ {{ "{:,.2f}".format(audit.breakdown.completion_fluids) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px;">Logistics & Support</td>
+                            <td style="text-align: right; padding: 12px; font-family: 'Roboto Mono';">$ {{ "{:,.2f}".format(audit.breakdown.logistics_support) }}</td>
+                        </tr>
+                        {% for item in audit.breakdown.specialized_materials %}
+                        <tr style="background: rgba(0,255,195,0.03);">
+                            <td style="padding: 12px;">
+                                <strong>{{ item.item }}</strong><br>
+                                <small style="color: var(--text-dim);">Rationale: {{ item.reason }}</small>
+                            </td>
+                            <td style="text-align: right; padding: 12px; font-family: 'Roboto Mono';">$ {{ "{:,.2f}".format(item.cost) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr style="border-top: 2px solid var(--warning); font-weight: bold; font-size: 1rem;">
+                            <td style="padding: 15px;">TOTAL ESTIMATED CAPEX</td>
+                            <td style="text-align: right; padding: 15px; color: var(--warning); font-family: 'Roboto Mono';">$ {{ "{:,.2f}".format(audit.capex_total) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- OPEX & Financials -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="glass-panel">
+                    <h4 style="margin-bottom: 15px; color: var(--neon-blue); font-size: 0.8rem;">OPEX AUDIT</h4>
+                    <div style="font-size: 1.5rem; font-family: 'Space Grotesk';">$ {{ "{:,.2f}".format(audit.opex_monthly) }} <small style="font-size: 0.7rem; color: var(--text-dim);">/ month</small></div>
+                    <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 10px;">Includes personnel, maintenance, and facility overhead adjusted for {{ audit.environment }} logistics.</p>
+                </div>
+                <div class="glass-panel" style="border-color: {% if feasibility.is_feasible %}var(--neon-teal){% else %}var(--error){% endif %};">
+                    <h4 style="margin-bottom: 15px; color: var(--neon-teal); font-size: 0.8rem;">VIABILITY SUMMARY</h4>
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">
+                        {% if feasibility.is_feasible %}
+                        <span style="color: var(--neon-teal);"><i class="fas fa-check-circle"></i> PROJECT VIABLE</span>
+                        {% else %}
+                        <span style="color: var(--error);"><i class="fas fa-times-circle"></i> MARGINAL VIABILITY</span>
+                        {% endif %}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                        <span>NPV Strategy:</span> <span style="font-family: 'Roboto Mono';">$ {{ "{:,.0f}".format(feasibility.metrics.npv) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+            <!-- Geological Rationales -->
+            <div class="glass-panel" style="border-color: var(--neon-teal); background: rgba(0,255,195,0.02);">
+                <h4 style="color: var(--neon-teal); margin-bottom: 15px;"><i class="fas fa-microscope"></i> Geological Rationale</h4>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    {% for rat in audit.rationales %}
+                    <div style="font-size: 0.8rem; line-height: 1.4; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; border-left: 2px solid var(--neon-teal);">
+                        {{ rat }}
+                    </div>
+                    {% endfor %}
+                    <div style="font-size: 0.7rem; color: var(--text-dim); font-style: italic; margin-top: 10px;">
+                        Note: Materials are enquiring based on the formation properties at current coordinates.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization of ROI/Payback -->
+            <div class="glass-panel">
+                <h4 style="margin-bottom: 20px;">Financial Efficiency</h4>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.65rem; color: var(--text-dim); margin-bottom: 5px;">ESTIMATED ROI</div>
+                    <div style="font-size: 2rem; font-family: 'Space Grotesk'; color: var(--neon-blue);">{{ feasibility.metrics.roi }}%</div>
+                    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+                        <div>
+                            <div style="font-size: 0.55rem; color: var(--text-dim);">PAYBACK</div>
+                            <div style="font-family: 'Roboto Mono';">{{ feasibility.metrics.payback_months }} mo</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.55rem; color: var(--text-dim);">GROSS REV</div>
+                            <div style="font-family: 'Roboto Mono';">$ {{ "{:,.0f}".format(feasibility.financials.gross_revenue / 1000000) }}M</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

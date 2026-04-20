@@ -1,0 +1,177 @@
+<div style="display: flex; flex-direction: column; gap: 20px;" class="page-transition">
+    <!-- Top Row: Global Stats -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+        <div class="glass-panel" style="text-align: center; border-color: var(--neon-teal); height: 100%; display: flex; flex-direction: column; justify-content: center;">
+            <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Intellectual Rank</h4>
+            <div id="intellectual-rank" style="font-size: 1.2rem; color: var(--neon-teal); margin: 8px 0; font-family: 'Space Grotesk'; font-weight: 800;">CALIBRATING...</div>
+            <div style="height: 4px; background: rgba(0, 255, 195, 0.1); border-radius: 2px; margin: 5px 15px; overflow: hidden;">
+                <div id="cognitive-progress" style="height: 100%; width: 20%; background: var(--neon-teal); box-shadow: 0 0 10px var(--neon-teal);"></div>
+            </div>
+            <div style="font-size: 0.55rem; color: var(--text-dim); margin-top: 5px;" id="reasoning-mode">MODE: FOUNDATIONAL LOGIC</div>
+        </div>
+        <div class="glass-panel" style="text-align: center;">
+            <h4 style="color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Extracted Facts</h4>
+            <div style="font-size: 2.5em; color: var(--neon-teal); margin: 10px 0; font-family: 'Roboto Mono'; font-weight: 800;">{{ knowledge_count }}</div>
+            <div style="height: 4px; background: rgba(0, 255, 195, 0.1); border-radius: 2px; overflow: hidden;">
+                <div style="height: 100%; width: 70%; background: var(--neon-teal); box-shadow: 0 0 10px var(--neon-teal);"></div>
+            </div>
+        </div>
+        <div class="glass-panel" style="text-align: center;">
+            <h4 style="color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Model Accuracy</h4>
+            <div style="font-size: 2.5em; color: var(--neon-blue); margin: 10px 0; font-family: 'Roboto Mono'; font-weight: 800;">{{ confidence }}%</div>
+            <div style="height: 4px; background: rgba(0, 212, 255, 0.1); border-radius: 2px; overflow: hidden;">
+                <div style="height: 100%; width: {{ confidence }}%; background: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue);"></div>
+            </div>
+        </div>
+        <div class="glass-panel" style="text-align: center; border-color: var(--warning);">
+            <h4 style="color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Autonomous Pulse</h4>
+            <div id="countdown-clock" style="font-size: 2.5em; color: var(--warning); margin: 10px 0; font-family: 'Roboto Mono'; font-weight: 800;">--:--</div>
+            <div style="height: 4px; background: rgba(255, 171, 0, 0.1); border-radius: 2px; overflow: hidden;">
+                <div style="height: 100%; width: 45%; background: var(--warning); box-shadow: 0 0 10px var(--warning);"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">
+        <!-- Left: Activity Log -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-panel" style="padding: 0; overflow: hidden; height: 100%;">
+                <div style="padding: 15px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between;">
+                    <span style="font-size: 0.8rem; letter-spacing: 1px;">📡 SYNAPTIC ACTIVITY STREAM</span>
+                    <span style="color: var(--neon-teal); font-size: 0.7rem;">LIVE FEED ACTIVATED</span>
+                </div>
+                <div id="learning-feed" style="height: 450px; overflow-y: auto; background: rgba(0,0,0,0.3); color: #00ffc3; font-family: 'Roboto Mono', monospace; padding: 20px; font-size: 0.75em;">
+                    {% for log in logs %}
+                        <div style="margin-bottom: 8px; border-left: 2px solid rgba(0, 255, 195, 0.2); padding-left: 10px;">
+                            <span style="color: var(--text-dim);">[{{ log.timestamp }}]</span> 
+                            <span style="color: var(--neon-blue);">{{ log.event_type }}:</span> {{ log.description }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Control & Status -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- Neural Mesh Viz -->
+            <div class="glass-panel" style="height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden;">
+                <div class="pulse-ring" style="position: absolute; width: 80px; height: 80px; border-color: rgba(0, 255, 195, 0.3);"></div>
+                <i class="fas fa-brain" style="font-size: 2.5rem; color: var(--neon-teal); z-index: 1;"></i>
+                <div style="margin-top: 15px; text-align: center; z-index: 1;">
+                    <span style="color: var(--neon-teal); font-family: 'Roboto Mono'; font-size: 1rem;">{{ knowledge_count * 3 }} Active Nodes</span>
+                </div>
+            </div>
+
+            <!-- Command Console -->
+            <div class="glass-panel" style="padding: 20px; background: rgba(255, 77, 77, 0.02); border-color: rgba(255, 77, 77, 0.2);">
+                <button class="cyber-btn" style="width: 100%; border-color: var(--error); color: var(--error); margin-bottom: 15px;" onclick="triggerGrowth()">
+                    <i class="fas fa-bolt"></i> TRIGGER GROWTH
+                </button>
+                <div id="growth-spinner" style="display: none; text-align: center; margin-bottom: 15px;">
+                    <div class="fas fa-sync fa-spin" style="color: var(--neon-teal);"></div>
+                </div>
+                <div style="font-size: 0.65rem; color: var(--text-dim);">
+                    <strong>STATUS:</strong> <span id="growth-status-text" style="color: var(--neon-teal);">IDLE</span><br>
+                    <strong>EXTRACTED:</strong> <span id="facts-ticker" style="color: var(--neon-blue);">0</span> FACTS
+                </div>
+            </div>
+
+            <!-- Recent Summary -->
+            <div class="glass-panel" style="flex: 1; padding: 15px; overflow: hidden;">
+                <h4 style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Recent Extractions</h4>
+                <div style="height: 150px; overflow-y: auto;">
+                    {% for fact in facts %}
+                        <div style="border-bottom: 1px solid var(--glass-border); padding: 5px 0; font-size: 0.7rem;">
+                            <div style="color: var(--neon-teal);">{{ fact.entity_name }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const feed = document.getElementById('learning-feed');
+    if(feed) feed.scrollTop = feed.scrollHeight;
+
+    let pollInterval = null;
+    let isGrowthActive = false; // Prevents infinite reload
+
+    function startPolling() {
+        if(pollInterval) return;
+        
+        pollInterval = setInterval(() => {
+            fetch('/api/intelligence/growth-status')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('growth-status-text').innerText = data.current_action;
+                    document.getElementById('facts-ticker').innerText = data.facts_found;
+                    
+                    if(data.next_sync) {
+                        const next = new Date(data.next_sync);
+                        const now = new Date();
+                        const diff = Math.floor((next - now) / 1000);
+                        if(diff > 0) {
+                            const m = Math.floor(diff / 60);
+                            const s = diff % 60;
+                            document.getElementById('countdown-clock').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                        } else {
+                            document.getElementById('countdown-clock').innerText = "0:00";
+                        }
+                    }
+
+                    const count = parseInt(data.facts_found) + {{ knowledge_count }};
+                    let rank = "CORE ASSISTANT";
+                    let mode = "MODE: FOUNDATIONAL LOGIC";
+                    let progress = (count / 500) * 100;
+                    
+                    if(count >= 1500) { 
+                        rank = "CHIEF ARCHITECT"; 
+                        mode = "MODE: STRATEGIC DEDUCTION";
+                        progress = 100;
+                    } else if(count >= 500) { 
+                        rank = "LEAD ASSET"; 
+                        mode = "MODE: TECHNICAL SYNTHESIS";
+                        progress = ((count - 500) / 1000) * 100;
+                    }
+                    
+                    document.getElementById('intellectual-rank').innerText = rank;
+                    document.getElementById('reasoning-mode').innerText = mode;
+                    document.getElementById('cognitive-progress').style.width = `${progress}%`;
+                    
+                    if(isGrowthActive && data.status === 'IDLE' && data.current_action === 'Task Complete') {
+                        isGrowthActive = false;
+                        stopPolling();
+                        alert("Growth cycle complete. Knowledge base expanded.");
+                        // Only reload manually if needed or update UI via SPA
+                        // For now, let's keep it stable without reload
+                    }
+                });
+        }, 1000);
+    }
+    
+    startPolling();
+
+    function stopPolling() {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        document.getElementById('growth-spinner').style.display = 'none';
+        isGrowthActive = false;
+    }
+
+    const originalTrigger = window.triggerGrowth;
+    window.triggerGrowth = function() {
+        if(typeof playSfx === 'function') playSfx();
+        if (!confirm("Caution: Deep growth cycle consumes significant CPU. Proceed?")) return;
+        
+        isGrowthActive = true;
+        document.getElementById('growth-spinner').style.display = 'block';
+        fetch('/api/intelligence/trigger-growth', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                startPolling();
+            });
+    }
+</script>
