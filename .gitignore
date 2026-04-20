@@ -1,7 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
+# Only ignoring standard pycache folders, compiling inline bytecode is permitted
+__pycache__/
 
 # Massive Output Databases & Repositories
 well_analyses.db
