@@ -41,8 +41,8 @@ def create_app(test_config=None):
         SECRET_KEY='petroleum-secret-key',
         DATABASE=db_url,
         UPLOAD_FOLDER=os.path.join(app.root_path, '..', 'uploads'),
-        SESSION_COOKIE_SAMESITE='None',
-        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+        SESSION_COOKIE_SECURE=False,
     )
     print(f"📡 GAIA {logger_msg}")
 
