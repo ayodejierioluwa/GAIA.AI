@@ -1,0 +1,209 @@
+<div class="page-transition">
+    <!-- Header: Foresight Interface -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 0;">RESERVOIR <span style="color: var(--warning);">FORESIGHT</span></h1>
+            <p style="color: var(--text-dim); letter-spacing: 2px; font-size: 0.8rem;">PREDICTIVE DISCOVERY ENGINE • ML-DRIVEN ASSET AUDIT</p>
+        </div>
+        <div class="glass-panel" style="padding: 10px 20px; display: flex; gap: 20px; font-family: 'Roboto Mono'; font-size: 0.7rem;">
+            <div><span style="color: var(--text-dim);">MODEL:</span> <span style="color: var(--warning);">GAIA-FORSIGHT-2.1</span></div>
+            <div><span style="color: var(--text-dim);">CONFIDENCE:</span> <span style="color: var(--neon-teal);">94.2%</span></div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 350px 1fr; gap: 20px;">
+        <!-- Left: Prediction Workbench -->
+        <div class="glass-panel" style="padding: 25px;">
+            <h3 style="color: var(--warning); margin-bottom: 20px; font-size: 1rem;"><i class="fas fa-brain"></i> PROBABILITY WORKBENCH</h3>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">TARGET FORMATION</label>
+                <select id="target-formation" class="cyber-input" style="width: 100%;">
+                    <option value="Agbada">Agbada Formation (Deltaic)</option>
+                    <option value="Akata">Akata Formation (Deepwater)</option>
+                    <option value="Benin">Benin Formation (Continental)</option>
+                    <option value="Coal Measures">Coal Measures (Benue)</option>
+                    <option value="Asu River">Asu River Group (Cretaceous)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">TARGET VECTOR (LAT, LON)</label>
+                <input type="text" id="target-coords" value="4.9, 6.5" class="cyber-input" style="width: 100%;" placeholder="e.g. 4.9, 6.5">
+                <div id="bounds-hint" style="font-size: 0.55rem; color: var(--neon-teal); margin-top: 5px;">
+                    VALID RANGE: Lat [4.0, 6.0], Lon [5.0, 8.5]
+                </div>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">ESTIMATED DRILL DEPTH (M)</label>
+                <input type="range" id="target-depth" min="500" max="8000" step="100" value="3000" style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value + 'm'">
+                <div id="depth-val" style="text-align: right; font-family: 'Roboto Mono'; font-size: 0.8rem; color: var(--neon-teal);">3000m</div>
+            </div>
+
+            <button class="cyber-btn" style="width: 100%; padding: 15px; border-color: var(--warning); color: var(--warning);" onclick="generatePrediction()">
+                <i class="fas fa-microchip"></i> EXECUTE FORESIGHT AUDIT
+            </button>
+
+            <!-- Coordinates Guide -->
+            <div class="glass-panel" style="margin-top: 25px; padding: 15px; border-color: rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
+                <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Formation Geo-Bounds</h4>
+                <div style="font-size: 0.65rem; color: var(--text-primary); line-height: 1.6;" id="geo-guide-list">
+                    <!-- Populated by script -->
+                </div>
+            </div>
+
+            <!-- Probability Dial -->
+            <div class="glass-panel" style="margin-top: 30px; text-align: center; padding: 20px; border-color: var(--warning); background: rgba(255, 171, 0, 0.05);">
+                <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 15px;">Discovery Probability</h4>
+                <div id="prob-dial" style="font-size: 3rem; font-family: 'Space Grotesk'; font-weight: 800; color: var(--warning);">0%</div>
+                <div style="height: 6px; background: rgba(255, 171, 0, 0.1); border-radius: 3px; margin-top: 10px; overflow: hidden;">
+                    <div id="prob-bar" style="height: 100%; width: 0%; background: var(--warning); box-shadow: 0 0 15px var(--warning);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Visualization & Interpretation -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="glass-panel" style="padding: 20px;">
+                    <h4 style="color: var(--neon-teal); font-size: 0.8rem; margin-bottom: 15px;"><i class="fas fa-list-check"></i> PROBABILITY FACTORS</h4>
+                    <div id="factor-list" style="font-size: 0.75rem; color: var(--text-primary);">
+                        [Awaiting Input Parameters]
+                    </div>
+                </div>
+                <div class="glass-panel" style="padding: 20px; border-color: var(--neon-blue);">
+                    <h4 style="color: var(--neon-blue); font-size: 0.8rem; margin-bottom: 15px;"><i class="fas fa-shield-halved"></i> SYSTEM CONFIDENCE</h4>
+                    <div id="confidence-val" style="font-size: 2rem; font-family: 'Roboto Mono'; color: var(--neon-blue);">--%</div>
+                    <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px;">Based on historical basin synergy and data density.</div>
+                </div>
+            </div>
+
+            <div id="foresight-panel" class="glass-panel" style="flex: 1; padding: 25px; border-left: 4px solid var(--warning); background: rgba(255, 171, 0, 0.02); display: none;">
+                <h3 style="color: var(--warning); margin-bottom: 15px; font-size: 0.9rem;"><i class="fas fa-brain"></i> ORACLE FORESIGHT INTERPRETATION</h3>
+                <div id="foresight-text" style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary); font-family: 'Roboto Mono';"></div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 4px; border: 1px dashed var(--glass-border);">
+                    <h4 style="font-size: 0.7rem; color: var(--warning); text-transform: uppercase;">Strategic Recommendation</h4>
+                    <p id="strat-rec" style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const geoBounds = {
+        'Agbada': { lat: [4.0, 6.0], lon: [5.0, 8.5], desc: 'Niger Delta Central' },
+        'Akata': { lat: [3.0, 5.0], lon: [4.0, 9.0], desc: 'Niger Delta Deepwater' },
+        'Benin': { lat: [5.5, 7.5], lon: [5.0, 9.0], desc: 'Continental Sands' },
+        'Coal Measures': { lat: [7.0, 10.0], lon: [7.0, 11.0], desc: 'Lower Benue Trough' },
+        'Asu River': { lat: [9.0, 12.0], lon: [9.0, 13.0], desc: 'Upper Benue / Gongola' }
+    };
+
+    function updateGuide() {
+        const list = document.getElementById('geo-guide-list');
+        list.innerHTML = Object.entries(geoBounds).map(([name, b]) => `
+            <div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 5px;">
+                <strong>${name}</strong>: ${b.desc}<br>
+                <span style="color: var(--text-dim);">LAT: ${b.lat[0]}-${b.lat[1]} | LON: ${b.lon[0]}-${b.lon[1]}</span>
+            </div>
+        `).join('');
+        
+        const formation = document.getElementById('target-formation').value;
+        const b = geoBounds[formation];
+        document.getElementById('bounds-hint').innerText = `VALID RANGE: Lat [${b.lat[0]}, ${b.lat[1]}], Lon [${b.lon[0]}, ${b.lon[1]}]`;
+    }
+
+    document.getElementById('target-formation').addEventListener('change', updateGuide);
+    updateGuide();
+
+    function generatePrediction() {
+        if(typeof playSfx === 'function') playSfx();
+        const formation = document.getElementById('target-formation').value;
+        const coordsRaw = document.getElementById('target-coords').value.split(',');
+        const depth = document.getElementById('target-depth').value;
+        
+        if(coordsRaw.length < 2) return alert("Please enter valid coordinates (Lat, Lon)");
+        const lat = parseFloat(coordsRaw[0]);
+        const lon = parseFloat(coordsRaw[1]);
+
+        // Client-side validation
+        const b = geoBounds[formation];
+        if(lat < b.lat[0] || lat > b.lat[1] || lon < b.lon[0] || lon > b.lon[1]) {
+            alert(`INVALID COORDINATES: ${formation} formation only exists within Lat [${b.lat[0]}, ${b.lat[1]}] and Lon [${b.lon[0]}, ${b.lon[1]}]. Please consult the Geo-Bounds guide.`);
+            return;
+        }
+
+        // UI Loading State
+        document.getElementById('prob-dial').innerText = "CALC...";
+        document.getElementById('prob-bar').style.width = "100%";
+        document.getElementById('prob-bar').style.background = "var(--neon-teal)";
+
+        fetch(`/api/ml/predict-discovery?lat=${lat}&lon=${lon}&depth=${depth}&formation=${formation}`)
+            .then(r => r.json())
+            .then(data => {
+                // Update Probability
+                const prob = (data.probability * 100).toFixed(1);
+                document.getElementById('prob-dial').innerText = prob + "%";
+                document.getElementById('prob-bar').style.width = prob + "%";
+                document.getElementById('prob-bar').style.background = "var(--warning)";
+                
+                // Update Confidence
+                document.getElementById('confidence-val').innerText = (data.confidence * 100).toFixed(0) + "%";
+
+                // Render Factors
+                const factors = data.factors;
+                document.getElementById('factor-list').innerHTML = `
+                    <div style="margin-bottom: 10px;">
+                        <span style="color: var(--text-dim);">Geological Sync:</span> 
+                        <span style="float: right; color: var(--neon-teal);">${(factors.geological_depth_sync * 100).toFixed(0)}%</span>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span style="color: var(--text-dim);">Satellite Anomaly:</span> 
+                        <span style="float: right; color: var(--neon-teal);">${(factors.satellite_anomaly_intensity * 100).toFixed(0)}%</span>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <span style="color: var(--text-dim);">Basin Synergy:</span> 
+                        <span style="float: right; color: var(--neon-teal);">${(factors.basin_historical_synergy * 100).toFixed(0)}%</span>
+                    </div>
+                `;
+
+                // Display Oracle Foresight
+                const panel = document.getElementById('foresight-panel');
+                const text = document.getElementById('foresight-text');
+                const rec = document.getElementById('strat-rec');
+                
+                panel.style.display = 'block';
+                text.innerHTML = `Synthesizing predictive data for ${formation} at depth ${depth}m...<br><br>`;
+                
+                // Fetch AI Interpretation from Oracle
+                fetch('/api/intelligence/reason', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        query: `Provide a foresight interpretation for a discovery probability of ${prob}% at lat ${lat}, lon ${lon} in the ${formation} formation (depth ${depth}m). Factors include geological sync of ${factors.geological_depth_sync} and satellite anomaly of ${factors.satellite_anomaly_intensity}.`
+                    })
+                })
+                .then(r => r.json())
+                .then(aiRes => {
+                    if (aiRes.status === 'success') {
+                        text.innerHTML = aiRes.response.replace(/\n/g, '<br>');
+                    } else {
+                        text.innerHTML = `<span style="color: red;">Error: ${aiRes.message || aiRes.response}</span>`;
+                    }
+                    
+                    if(prob > 75) {
+                        rec.innerText = "PROCEED TO SEISMIC AUDIT: High spectral-geological correlation suggests an active hydrocarbon trap.";
+                    } else if(prob > 40) {
+                        rec.innerText = "ADDITIONAL SCAN REQUIRED: Moderate confidence. Recommend SAR Temporal Audit for seepage verification.";
+                    } else {
+                        rec.innerText = "AVOID TARGET: Probability too low for viable commercial deployment. Pivot to adjacent fault blocks.";
+                    }
+                })
+                .catch(err => {
+                    text.innerHTML = `<span style="color: red;">Fetch Error: ${err}</span>`;
+                });
+            });
+    }
+</script>

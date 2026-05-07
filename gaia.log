@@ -1,0 +1,26 @@
+📡 GAIA Using Local SQLite: /Users/macbook/.gemini/antigravity/scratch/petroleum-ai/gaia/../well_analyses_v3.db
+🚀 Starting GAIA AI — Nigerian Petroleum Intelligence Platform (Modular)...
+⚡ Supercomputer throttled to 6 cores (Mac-safe)
+🧠 Starting GAIA Autonomous Growth Service...
+✅ ML models ready — 208 training samples
+
+   GAIA AI is running at: http://127.0.0.1:5001
+   (To use offsite storage, set DATABASE_URL environment variable)
+ * Serving Flask app 'gaia.app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.27:5001
+[33mPress CTRL+C to quit[0m
+/Users/macbook/Library/Python/3.14/lib/python/site-packages/dask/_task_spec.py:768: RuntimeWarning: invalid value encountered in divide
+  return self.func(*new_argspec)
+127.0.0.1 - - [04/May/2026 18:02:18] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/May/2026 18:02:19] "GET /static/css/index.css HTTP/1.1" 200 -
+127.0.0.1 - - [04/May/2026 18:02:20] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [04/May/2026 18:02:29] "GET /api/chat/status HTTP/1.1" 200 -
+127.0.0.1 - - [04/May/2026 18:02:39] "GET /api/intelligence/growth-status HTTP/1.1" 200 -
+127.0.0.1 - - [04/May/2026 18:04:23] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/May/2026 18:04:23] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [04/May/2026 18:04:23] "[36mGET /static/css/index.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [04/May/2026 18:04:24] "GET /api/chat/status HTTP/1.1" 200 -

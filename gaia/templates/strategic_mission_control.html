@@ -1,0 +1,210 @@
+<div class="page-transition">
+    <!-- Header: Strategic Mission Control -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 0;">STRATEGIC <span style="color: var(--neon-blue);">MISSION CONTROL</span></h1>
+            <p style="color: var(--text-dim); letter-spacing: 2px; font-size: 0.8rem;">EXECUTIVE ASSET MANAGEMENT • COMMERCIAL FORESIGHT</p>
+        </div>
+        <div class="glass-panel" style="padding: 10px 20px; display: flex; gap: 20px; font-family: 'Roboto Mono'; font-size: 0.7rem;">
+            <div><span style="color: var(--text-dim);">REGIME:</span> <span id="fiscal-regime" style="color: var(--neon-teal);">--</span></div>
+            <div><span style="color: var(--text-dim);">ASSET LIFE:</span> <span style="color: var(--neon-blue);">20 YEARS</span></div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 350px; gap: 20px;">
+        <!-- Center: Strategy Visualization -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div class="glass-panel" style="padding: 20px; border-color: var(--neon-teal);">
+                    <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Expected Monetary Value (EMV)</h4>
+                    <div id="emv-val" style="font-size: 1.8rem; font-family: 'Space Grotesk'; color: var(--neon-teal);">$0.00</div>
+                    <div style="font-size: 0.6rem; color: var(--text-dim);">Risk-adjusted valuation (20-year cycle).</div>
+                </div>
+                <div class="glass-panel" style="padding: 20px; border-color: var(--warning);">
+                    <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Risk-Adjusted ROI</h4>
+                    <div id="risk-roi" style="font-size: 1.8rem; font-family: 'Space Grotesk'; color: var(--warning);">0%</div>
+                    <div style="font-size: 0.6rem; color: var(--text-dim);">Probability-weighted return on investment.</div>
+                </div>
+                <div class="glass-panel" style="padding: 20px; border-color: var(--neon-blue);">
+                    <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Net Take (Est.)</h4>
+                    <div id="net-take" style="font-size: 1.8rem; font-family: 'Space Grotesk'; color: var(--neon-blue);">$0.00</div>
+                    <div style="font-size: 0.6rem; color: var(--text-dim);">Projected profit after royalties/taxes.</div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 25px; flex: 1;">
+                <h3 style="color: var(--neon-blue); font-size: 0.9rem; margin-bottom: 20px;"><i class="fas fa-route"></i> STRATEGIC DEPLOYMENT ROADMAP</h3>
+                <div id="milestone-container" style="display: flex; flex-direction: column; gap: 15px;">
+                    <!-- Milestones -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Execution Engine -->
+        <div class="glass-panel" style="padding: 25px;">
+            <h3 style="color: var(--neon-teal); margin-bottom: 20px; font-size: 0.9rem;"><i class="fas fa-sliders"></i> MISSION PARAMETERS</h3>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">TARGET VECTOR (LAT, LON)</label>
+                <input type="text" id="strat-coords" value="4.9, 6.5" class="cyber-input" style="width: 100%;">
+                <div id="strat-bounds-hint" style="font-size: 0.55rem; color: var(--neon-teal); margin-top: 5px;">
+                    VALID RANGE: Lat [4.0, 6.0], Lon [5.0, 8.5]
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">TARGET FORMATION</label>
+                <select id="strat-formation" class="cyber-input" style="width: 100%;">
+                    <option value="Agbada">Agbada Formation</option>
+                    <option value="Akata">Akata Formation</option>
+                    <option value="Benin">Benin Formation</option>
+                    <option value="Coal Measures">Coal Measures</option>
+                    <option value="Asu River">Asu River Group</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">TARGET DRILL DEPTH (M)</label>
+                <input type="number" id="strat-depth" value="3000" class="cyber-input" style="width: 100%;">
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 8px;">ANTICIPATED INITIAL FLOW (BPD)</label>
+                <input type="range" id="strat-flow" min="100" max="10000" step="100" value="1500" style="width: 100%;" oninput="document.getElementById('flow-val').innerText = this.value + ' BPD'">
+                <div id="flow-val" style="text-align: right; font-family: 'Roboto Mono'; font-size: 0.8rem; color: var(--neon-teal);">1500 BPD</div>
+            </div>
+
+            <button class="cyber-btn" style="width: 100%; padding: 15px; background: var(--neon-blue); color: black;" onclick="generateStrategy()">
+                <i class="fas fa-satellite-dish"></i> INITIATE STRATEGIC AUDIT
+            </button>
+
+            <!-- Coordinates Guide -->
+            <div class="glass-panel" style="margin-top: 25px; padding: 15px; border-color: rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);">
+                <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Formation Geo-Bounds</h4>
+                <div style="font-size: 0.65rem; color: var(--text-primary); line-height: 1.6;" id="strat-geo-guide-list">
+                    <!-- Populated by script -->
+                </div>
+            </div>
+
+            <div id="risk-badge" class="glass-panel" style="margin-top: 30px; text-align: center; padding: 15px; display: none;">
+                <span id="risk-label" style="font-size: 0.7rem; font-weight: bold; letter-spacing: 2px;"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom: Oracle Strategic Summary -->
+    <div id="oracle-strategy-panel" class="glass-panel" style="margin-top: 20px; padding: 25px; border-left: 4px solid var(--neon-blue); background: rgba(0, 212, 255, 0.02); display: none;">
+        <h3 style="color: var(--neon-blue); font-size: 0.9rem; margin-bottom: 15px;"><i class="fas fa-brain"></i> ORACLE STRATEGIC REASONING</h3>
+        <div id="oracle-strategy-text" style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary); font-family: 'Roboto Mono';"></div>
+    </div>
+</div>
+
+<script>
+    const geoBounds = {
+        'Agbada': { lat: [4.0, 6.0], lon: [5.0, 8.5], desc: 'Niger Delta Central' },
+        'Akata': { lat: [3.0, 5.0], lon: [4.0, 9.0], desc: 'Niger Delta Deepwater' },
+        'Benin': { lat: [5.5, 7.5], lon: [5.0, 9.0], desc: 'Continental Sands' },
+        'Coal Measures': { lat: [7.0, 10.0], lon: [7.0, 11.0], desc: 'Lower Benue Trough' },
+        'Asu River': { lat: [9.0, 12.0], lon: [9.0, 13.0], desc: 'Upper Benue / Gongola' }
+    };
+
+    function updateStrategyGuide() {
+        const list = document.getElementById('strat-geo-guide-list');
+        list.innerHTML = Object.entries(geoBounds).map(([name, b]) => `
+            <div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 5px;">
+                <strong>${name}</strong>: ${b.desc}<br>
+                <span style="color: var(--text-dim);">LAT: ${b.lat[0]}-${b.lat[1]} | LON: ${b.lon[0]}-${b.lon[1]}</span>
+            </div>
+        `).join('');
+        
+        const formation = document.getElementById('strat-formation').value;
+        const b = geoBounds[formation];
+        document.getElementById('strat-bounds-hint').innerText = `VALID RANGE: Lat [${b.lat[0]}, ${b.lat[1]}], Lon [${b.lon[0]}, ${b.lon[1]}]`;
+    }
+
+    document.getElementById('strat-formation').addEventListener('change', updateStrategyGuide);
+    updateStrategyGuide();
+
+    function generateStrategy() {
+        if(typeof playSfx === 'function') playSfx();
+        const coordsRaw = document.getElementById('strat-coords').value.split(',');
+        const formation = document.getElementById('strat-formation').value;
+        const depth = document.getElementById('strat-depth').value;
+        const flow = document.getElementById('strat-flow').value;
+
+        if(coordsRaw.length < 2) return alert("Please enter valid coordinates (Lat, Lon)");
+        const lat = parseFloat(coordsRaw[0]);
+        const lon = parseFloat(coordsRaw[1]);
+
+        // Client-side validation
+        const b = geoBounds[formation];
+        if(lat < b.lat[0] || lat > b.lat[1] || lon < b.lon[0] || lon > b.lon[1]) {
+            alert(`STRATEGIC ERROR: ${formation} formation only exists within Lat [${b.lat[0]}, ${b.lat[1]}] and Lon [${b.lon[0]}, ${b.lon[1]}]. Strategic audit rejected due to out-of-bounds parameters.`);
+            return;
+        }
+
+        // 1. Run ML Foresight first to get Probability
+        fetch(`/api/ml/predict-discovery?lat=${lat}&lon=${lon}&depth=${depth}&formation=${formation}`)
+            .then(r => r.json())
+            .then(mlData => {
+                const prob = mlData.probability || 0.5;
+                
+                // 2. Run Strategy Engine
+                fetch(`/api/strategy/generate?lat=${coords[0]}&lon=${coords[1]}&depth=${depth}&formation=${formation}&flow=${flow}&prob=${prob}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        // Update Financials
+                        document.getElementById('emv-val').innerText = "$" + data.executive_summary.emv.toLocaleString();
+                        document.getElementById('risk-roi').innerText = data.executive_summary.risk_adjusted_roi + "%";
+                        document.getElementById('net-take').innerText = "$" + data.executive_summary.net_take_estimate.toLocaleString();
+                        document.getElementById('fiscal-regime').innerText = data.executive_summary.fiscal_regime;
+
+                        // Update Risk Badge
+                        const badge = document.getElementById('risk-badge');
+                        const label = document.getElementById('risk-label');
+                        badge.style.display = 'block';
+                        label.innerText = "STRATEGIC RISK: " + data.strategic_risk;
+                        if(data.strategic_risk === 'LOW') {
+                            badge.style.borderColor = 'var(--neon-teal)';
+                            label.style.color = 'var(--neon-teal)';
+                        } else if(data.strategic_risk === 'MODERATE') {
+                            badge.style.borderColor = 'var(--warning)';
+                            label.style.color = 'var(--warning)';
+                        } else {
+                            badge.style.borderColor = '#ff4b2b';
+                            label.style.color = '#ff4b2b';
+                        }
+
+                        // Update Milestones
+                        const container = document.getElementById('milestone-container');
+                        container.innerHTML = data.milestones.map((m, i) => `
+                            <div style="display: flex; gap: 20px; align-items: flex-start; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <div style="width: 30px; height: 30px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--neon-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--neon-blue); font-size: 0.7rem; font-family: 'Roboto Mono'; flex-shrink: 0;">${i+1}</div>
+                                <div>
+                                    <div style="font-size: 0.75rem; font-weight: bold; color: var(--neon-blue); text-transform: uppercase;">${m.phase} <span style="color: var(--text-dim); font-weight: normal; margin-left: 10px;">(${m.duration})</span></div>
+                                    <div style="font-size: 0.8rem; color: var(--text-primary); margin-top: 4px;">${m.task}</div>
+                                </div>
+                            </div>
+                        `).join('');
+
+                        // Update Oracle Reasoning
+                        const panel = document.getElementById('oracle-strategy-panel');
+                        const text = document.getElementById('oracle-strategy-text');
+                        panel.style.display = 'block';
+                        text.innerHTML = "Synthesizing full asset life cycle strategy...";
+
+                        fetch('/api/intelligence/reason', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                query: `Provide a strategic executive reasoning for an oil asset in ${formation} at ${depth}m. EMV is $${data.executive_summary.emv}, Risk-Adjusted ROI is ${data.executive_summary.risk_adjusted_roi}%, and the fiscal regime is ${data.executive_summary.fiscal_regime}. Discovery probability was ${prob * 100}%.`
+                            })
+                        })
+                        .then(r => r.json())
+                        .then(aiRes => {
+                            text.innerHTML = aiRes.response.replace(/\n/g, '<br>');
+                        });
+                    });
+            });
+    }
+</script>

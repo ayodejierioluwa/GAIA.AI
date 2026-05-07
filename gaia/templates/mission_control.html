@@ -1,0 +1,152 @@
+<div class="page-transition">
+    <!-- Header: Strategic Mission Control -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 0;">MISSION <span style="color: var(--neon-blue);">CONTROL</span></h1>
+            <p style="color: var(--text-dim); letter-spacing: 2px; font-size: 0.8rem;">EXECUTIVE DECISION SUPPORT • STRATEGIC ASSET OVERSIGHT</p>
+        </div>
+        <div class="glass-panel" style="padding: 10px 20px; display: flex; gap: 20px; font-family: 'Roboto Mono'; font-size: 0.7rem; border-color: var(--neon-blue);">
+            <div><span style="color: var(--text-dim);">ASSETS UNDER GAIA:</span> <span style="color: var(--neon-blue);">12</span></div>
+            <div><span style="color: var(--text-dim);">SYSTEM CONFIDENCE:</span> <span style="color: var(--neon-teal);">{{ confidence }}%</span></div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
+        <!-- Strategic Health Cards -->
+        <div class="glass-panel" style="background: rgba(0, 212, 255, 0.05); border-color: var(--neon-blue);">
+            <h4 style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Operational Status</h4>
+            <div style="font-size: 1.5rem; color: var(--neon-blue); font-weight: 800;">OPTIMAL</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px;">ALL SENSORS SYNCED</div>
+        </div>
+        <div class="glass-panel" style="background: rgba(0, 255, 195, 0.05); border-color: var(--neon-teal);">
+            <h4 style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Market Position</h4>
+            <div style="font-size: 1.5rem; color: var(--neon-teal); font-weight: 800;">ADVANTAGED</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px;">BRENT @ $82.40</div>
+        </div>
+        <div class="glass-panel" style="background: rgba(255, 171, 0, 0.05); border-color: var(--warning);">
+            <h4 style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Resource Reserve</h4>
+            <div style="font-size: 1.5rem; color: var(--warning); font-weight: 800;">37.5B BBL</div>
+            <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px;">RESERVE REPLACEMENT RATIO: 1.2</div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <!-- Recommended Interventions -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-panel">
+                <h3 style="color: var(--neon-blue); margin-bottom: 20px; font-size: 1.1rem;"><i class="fas fa-exclamation-circle"></i> TOP STRATEGIC INTERVENTIONS</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="glass-panel" style="background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.9rem; font-weight: 800; color: var(--neon-blue);">OML 130 DEEPWATER EXPANSION</div>
+                            <div style="font-size: 0.7rem; color: var(--text-dim);">Neural Pulse suggests a 15% increase in untapped reservoir potential.</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: var(--neon-teal); font-weight: 800;">PRIORITY: HIGH</div>
+                            <button class="cyber-btn" style="font-size: 0.6rem; margin-top: 5px;" onclick="window.location.href='/api/intelligence/generate-brief'">VIEW BRIEF</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel" style="background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.9rem; font-weight: 800; color: var(--neon-teal);">ANAMBRA BASIN FRONTIER ENTRY</div>
+                            <div style="font-size: 0.7rem; color: var(--text-dim);">Spectral data indicates active seepage. JV formation recommended.</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: var(--neon-teal); font-weight: 800;">PRIORITY: MEDIUM</div>
+                            <button class="cyber-btn" style="font-size: 0.6rem; margin-top: 5px;" onclick="window.location.href='/api/intelligence/generate-brief'">VIEW BRIEF</button>
+                        </div>
+                    </div>
+                    <div class="glass-panel" style="background: rgba(255,171,0,0.05); border-color: var(--warning); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.9rem; font-weight: 800; color: var(--warning);">OML 42 MAINTENANCE SYNC</div>
+                            <div style="font-size: 0.7rem; color: var(--text-dim);">Flow rates decreasing. Predictive model suggests casing intervention.</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: var(--warning); font-weight: 800;">PRIORITY: URGENT</div>
+                            <button class="cyber-btn" style="font-size: 0.6rem; margin-top: 5px; border-color: var(--warning); color: var(--warning);" onclick="window.location.href='/api/intelligence/generate-brief'">EXECUTE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategic Consensus Chart -->
+            <div class="glass-panel">
+                <h3 style="color: var(--neon-teal); margin-bottom: 20px; font-size: 1rem;"><i class="fas fa-chart-pie"></i> SPECIALIST CONSENSUS MATRIX</h3>
+                <div id="consensus-matrix" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <!-- Decision Support Panel -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="glass-panel" style="background: rgba(0, 255, 195, 0.05); border-color: var(--neon-teal);">
+                <h3 style="color: var(--neon-teal); margin-bottom: 20px; font-size: 1rem;"><i class="fas fa-balance-scale"></i> GO/NO-GO MATRIX</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="font-size: 0.7rem; color: var(--text-dim);">TECHNICAL FEASIBILITY</label>
+                        <div class="progress-bar" style="height: 8px; margin-top: 5px;"><div style="width: 85%; background: var(--neon-teal);"></div></div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.7rem; color: var(--text-dim);">FINANCIAL UPSIDE (IRR > 20%)</label>
+                        <div class="progress-bar" style="height: 8px; margin-top: 5px;"><div style="width: 72%; background: var(--neon-blue);"></div></div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.7rem; color: var(--text-dim);">REGULATORY ALIGNMENT</label>
+                        <div class="progress-bar" style="height: 8px; margin-top: 5px;"><div style="width: 95%; background: #fff;"></div></div>
+                    </div>
+                    <div style="margin-top: 10px; padding: 15px; background: rgba(0,255,195,0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.8rem; font-weight: 800; color: var(--neon-teal);">VERDICT: STRATEGIC PROCEED</div>
+                        <div style="font-size: 0.6rem; color: var(--text-dim);">CONSENSUS CONFIDENCE: 89%</div>
+                    </div>
+                    <button class="cyber-btn" style="width: 100%; padding: 15px;" onclick="window.location.href='/api/intelligence/generate-brief'">GENERATE BOARD BRIEF</button>
+                </div>
+            </div>
+
+            <!-- GAIA Core Thoughts -->
+            <div class="glass-panel" style="flex: 1;">
+                <h4 style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 15px;">Core Strategic Logic</h4>
+                <div style="font-size: 0.8rem; line-height: 1.6; color: var(--text-primary); font-style: italic;">
+                    "The current market volatility provides a unique window for deepwater entry in OML 130. By leveraging GAIA's spectral seepage radar, we can bypass traditional seismic costs and move directly to exploratory appraisal."
+                </div>
+                <div style="margin-top: 20px; font-size: 0.6rem; color: var(--neon-blue);">
+                    <i class="fas fa-shield-alt"></i> ADVISORY: THIS IS AN AI-GENERATED STRATEGY.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function renderConsensus() {
+        const data = [{
+            values: [40, 35, 25],
+            labels: ['TECHNICAL', 'ECONOMIC', 'ENVIRONMENTAL'],
+            type: 'pie',
+            hole: .4,
+            marker: {
+                colors: ['#00ffc3', '#00d4ff', '#ffffff']
+            },
+            textinfo: 'label+percent',
+            textfont: { family: 'Space Grotesk', size: 12, color: 'white' }
+        }];
+
+        const layout = {
+            margin: { l: 20, r: 20, b: 20, t: 20 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            showlegend: false,
+            annotations: [
+                {
+                    font: { size: 14, color: '#00ffc3', family: 'Space Grotesk' },
+                    showarrow: false,
+                    text: 'GAIA',
+                    x: 0.5,
+                    y: 0.5
+                }
+            ]
+        };
+
+        Plotly.newPlot('consensus-matrix', data, layout, {displayModeBar: false});
+    }
+
+    setTimeout(renderConsensus, 500);
+</script>

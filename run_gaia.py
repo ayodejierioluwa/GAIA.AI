@@ -1,5 +1,13 @@
-# Copyright (c) 2026. All Rights Reserved.
-# Proprietary and confidential. Do not distribute.
+import sys
+import os
+
+# DEEP PATCH: Fix for Python 3.14 + Protobuf compatibility issue
+# The version of protobuf installed tries to auto-detect C extensions by importing them,
+# which causes a TypeError on Python 3.14 before the environment variable is even checked.
+# We block these modules in sys.modules to force a clean ImportError.
+sys.modules['google._upb'] = None
+sys.modules['google.protobuf.pyext'] = None
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
 """
 run_gaia.py
@@ -60,5 +68,14 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"⚠️  Error during ML init: {e} — using fallback demo mode")
 
+    # Database Health Check
+    db_path = app.config['DATABASE']
+    if os.path.exists(db_path) and not db_path.startswith(("postgresql", "mysql")):
+        size_gb = os.path.getsize(db_path) / (1024**3)
+        if size_gb > 1.0:
+            print(f"⚠️  Database Alert: Local storage is {size_gb:.2f}GB. Consider migrating to Cloud storage.")
+    
     print(f"\n   GAIA AI is running at: http://127.0.0.1:5001")
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    print(f"   (To use offsite storage, set DATABASE_URL environment variable)")
+    
+    app.run(debug=False, threaded=True, host='0.0.0.0', port=5001)

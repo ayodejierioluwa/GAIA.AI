@@ -1,0 +1,220 @@
+<div class="page-transition">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; color: var(--neon-blue); margin: 0;">🗺️ Geospatial 3D Studio</h1>
+            <p style="color: var(--text-dim); letter-spacing: 1px;">{{ basin_title | upper }} • ARCHITECTURAL AUDIT</p>
+        </div>
+        <button class="cyber-btn" onclick="location.href='/intelligence-suite'">BACK TO SUITE</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 350px; gap: 20px;">
+        <!-- Left: 3D Basin Model -->
+        <div class="glass-panel" style="background: #000; padding: 0; position: relative; height: 500px; overflow: hidden; border-color: var(--neon-blue);">
+            <div id="geospatial-plot" style="width: 100%; height: 100%;"></div>
+            <div style="position: absolute; top: 15px; left: 15px; pointer-events: none;">
+                <div class="glass-panel" style="background: rgba(0,0,0,0.6); border-color: var(--neon-blue); padding: 8px 15px;">
+                    <div style="font-size: 0.55rem; color: var(--neon-blue); letter-spacing: 2px;">SUBSURFACE (10km x 10km)</div>
+                    <div style="font-family: 'Roboto Mono'; font-size: 0.7rem;">3D BASIN RENDER</div>
+                </div>
+            </div>
+            <!-- Orientation Label -->
+            <div style="position: absolute; bottom: 15px; left: 15px; font-size: 0.6rem; color: var(--neon-blue); opacity: 0.8;">
+                <i class="fas fa-compass"></i> NORTH [Y-AXIS UP]
+            </div>
+            <button class="cyber-btn" onclick="snapTopView()" style="position: absolute; top: 15px; right: 15px; font-size: 0.6rem; padding: 5px 10px;">
+                <i class="fas fa-camera"></i> SNAP TO TOP VIEW
+            </button>
+
+            <!-- 3D Color Legend -->
+            <div class="glass-panel" style="position: absolute; bottom: 15px; right: 15px; padding: 8px; width: 110px; font-size: 0.55rem; background: rgba(0,0,0,0.7);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 3px;"><span>Intensity</span></div>
+                <div style="height: 6px; width: 100%; background: linear-gradient(to right, #440154, #21918c, #fde725); border-radius: 1px; margin-bottom: 3px;"></div>
+                <div style="display: flex; justify-content: space-between; color: var(--text-dim);">
+                    <span>DEPTH</span>
+                    <span>PEAK</span>
+                </div>
+            </div>
+
+            <!-- Agent Annotation Overlay -->
+            <div id="agent-annotation-card" style="display: none; position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 100; background: rgba(8, 10, 15, 0.95); border: 1px solid var(--neon-blue); border-radius: 12px; padding: 15px;" class="page-transition">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span id="annotation-title" style="font-weight: 800; color: var(--neon-blue); font-size: 0.7rem; letter-spacing: 2px;">ANOMALY ID: A1</span>
+                    <i class="fas fa-times" onclick="this.parentElement.parentElement.style.display='none'" style="cursor: pointer; color: var(--text-dim);"></i>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="agent-bubble agent-bubble-sentinel" style="margin: 0; padding: 10px; font-size: 0.7rem;">
+                        <div class="agent-label"><i class="fas fa-satellite"></i> SENTINEL TAKE</div>
+                        <div id="annotation-sentinel">...</div>
+                    </div>
+                    <div class="agent-bubble agent-bubble-prophet" style="margin: 0; padding: 10px; font-size: 0.7rem;">
+                        <div class="agent-label"><i class="fas fa-chart-line"></i> PROPHET TAKE</div>
+                        <div id="annotation-prophet">...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle: 2D Satellite Sync -->
+        <div class="glass-panel" style="background: #000; padding: 0; position: relative; height: 500px; overflow: hidden; border-color: var(--neon-teal);">
+            <div id="satellite-sync-plot" style="width: 100%; height: 100%;"></div>
+            <div style="position: absolute; top: 15px; left: 15px; pointer-events: none;">
+                <div class="glass-panel" style="background: rgba(0,0,0,0.6); border-color: var(--neon-teal); padding: 8px 15px;">
+                    <div style="font-size: 0.55rem; color: var(--neon-teal); letter-spacing: 2px;">SURFACE SYNC (10km x 10km)</div>
+                    <div style="font-family: 'Roboto Mono'; font-size: 0.7rem;">{{ active_sat_mode }} SPECTRAL</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 8px;">SELECT BASIN TARGET</label>
+                    <select id="basin-selector" class="cyber-input" style="width: 100%;" onchange="updateView()">
+                        <option value="niger_delta" {% if active_basin == 'niger_delta' %}selected{% endif %}>Niger Delta (Deepwater)</option>
+                        <option value="benue_trough" {% if active_basin == 'benue_trough' %}selected{% endif %}>Benue Trough (Rift)</option>
+                        <option value="anambra" {% if active_basin == 'anambra' %}selected{% endif %}>Anambra Basin (Inland)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 8px;">SATELLITE SYNC LAYER</label>
+                    <select id="sat-selector" class="cyber-input" style="width: 100%; border-color: var(--neon-teal);" onchange="updateView()">
+                        <option value="SAR" {% if active_sat_mode == 'SAR' %}selected{% endif %}>SAR (Seepage Radar)</option>
+                        <option value="THERMAL_IR" {% if active_sat_mode == 'THERMAL_IR' %}selected{% endif %}>Thermal Mapping</option>
+                        <option value="NDVI" {% if active_sat_mode == 'NDVI' %}selected{% endif %}>Vegetation Stress</option>
+                        <option value="TRUE_COLOR" {% if active_sat_mode == 'TRUE_COLOR' %}selected{% endif %}>True Color (RGB)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.6rem; color: var(--text-dim); display: block; margin-bottom: 8px;">MESH OPERATIONS</label>
+                    <button class="cyber-btn w-100" style="background: var(--neon-blue); color: black; font-weight: bold;" onclick="location.reload()">
+                        <i class="fas fa-sync-alt"></i> REGENERATE MESH
+                    </button>
+                </div>
+                <div style="font-size: 0.65rem; color: var(--text-dim); line-height: 1.4;">
+                    Visualizing subterranean structural anomalies across major Nigerian petroleum basins.
+                </div>
+            </div>
+
+            <div class="glass-panel" style="flex: 1; background: rgba(0,0,0,0.3);">
+                <h4 style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 15px;">Targeted Basin Metrics</h4>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="padding: 10px; border-left: 2px solid var(--warning); background: rgba(255,171,0,0.05);">
+                        <div style="font-size: 0.65rem; color: var(--warning);">ESTIMATED RECOVERY RATE</div>
+                        <div style="font-size: 0.85rem; font-weight: bold;">{{ metrics.rate }}</div>
+                    </div>
+                    <div style="padding: 10px; border-left: 2px solid var(--neon-blue); background: rgba(0,212,255,0.05);">
+                        <div style="font-size: 0.65rem; color: var(--neon-blue);">REMAINING RESERVES</div>
+                        <div style="font-size: 0.85rem; font-weight: bold;">{{ metrics.reserves }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Correlation panel moved below the grid -->
+        </div>
+    </div>
+
+    <!-- New Full-Width Correlation Panel -->
+    <div class="glass-panel" style="border-left: 4px solid #FFD700; background: rgba(255, 215, 0, 0.03); padding: 25px; margin-top: 20px;">
+        <h4 style="font-size: 0.9rem; color: #FFD700; text-transform: uppercase; margin-bottom: 15px;">
+            <i class="fas fa-brain"></i> ORACLE CORRELATION AUDIT
+        </h4>
+        <div id="oracle-correlation-text" style="font-size: 0.85rem; color: var(--text-primary); line-height: 1.8; min-height: 100px;">
+            <p style="color: var(--text-dim);">Click below to synchronize both domains for an Oracle assessment.</p>
+        </div>
+        <button class="cyber-btn" style="background: #FFD700; color: black; font-weight: bold; margin-top: 20px; padding: 12px 25px;" onclick="runOracleCorrelation()">
+            <i class="fas fa-bolt"></i> RUN CORRELATION AUDIT
+        </button>
+    </div>
+
+</div>
+
+<script>
+    function runOracleCorrelation() {
+        const basin = "{{ basin_title }}";
+        const mode = "{{ active_sat_mode }}";
+        const out = document.getElementById('oracle-correlation-text');
+        
+        out.innerHTML = `<div style="text-align: center; margin-top: 20px;"><i class="fas fa-brain fa-spin" style="color: #FFD700;"></i><br>SYNCHRONIZING DOMAINS...</div>`;
+        
+        fetch('/api/intelligence/reason', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query: `Perform a cross-domain correlation for ${basin} and ${mode} satellite imagery.`,
+                geological_context: { basin: basin, sat_mode: mode }
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                out.innerHTML = `<p>${data.response.replace(/\n/g, '<br>')}</p>`;
+            } else {
+                out.innerHTML = `<p style="color: red;">Error: ${data.message || data.response}</p>`;
+            }
+        })
+        .catch(err => {
+            out.innerHTML = `<p style="color: red;">Fetch Error: ${err}</p>`;
+        });
+    }
+
+    function snapTopView() {
+        Plotly.relayout('geospatial-plot', {
+            'scene.camera': {
+                eye: {x: 0, y: 0, z: 2.5},
+                up: {x: 0, y: 1, z: 0}
+            }
+        });
+    }
+
+    function updateView() {
+        const basin = document.getElementById('basin-selector').value;
+        const sat = document.getElementById('sat-selector').value;
+        location.href = `/geospatial-3d?basin=${basin}&sat_mode=${sat}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // 3D Plot
+        const plotData = {{ plot_data | safe }};
+        const layout3d = {
+            margin: {l: 0, r: 0, b: 0, t: 0},
+            paper_bgcolor: '#000',
+            plot_bgcolor: '#000',
+            scene: {
+                xaxis: {visible: false}, yaxis: {visible: false}, zaxis: {visible: false},
+                camera: { eye: {x: 1.5, y: 1.5, z: 1.2} }
+            },
+            autosize: true
+        };
+        Plotly.newPlot('geospatial-plot', plotData, layout3d);
+
+        // 2D Satellite Sync Plot
+        const satData = {{ sat_data | safe }};
+        const layoutSat = {
+            margin: {l: 0, r: 0, b: 0, t: 0},
+            paper_bgcolor: '#000',
+            plot_bgcolor: '#000',
+            xaxis: {visible: false},
+            yaxis: {visible: false},
+            autosize: true
+        };
+        Plotly.newPlot('satellite-sync-plot', satData, layoutSat);
+
+        // Click Event for Annotations
+        const plotEl = document.getElementById('geospatial-plot');
+        const quickTakes = {{ quick_takes | safe }};
+        
+        plotEl.on('plotly_click', function(data){
+            const point = data.points[0];
+            if(point.data.type === 'scatter3d') {
+                const title = point.text.split(':')[0];
+                const take = quickTakes[title];
+                
+                if(take) {
+                    document.getElementById('agent-annotation-card').style.display = 'block';
+                    document.getElementById('annotation-title').innerText = `ANOMALY ID: ${title}`;
+                    document.getElementById('annotation-sentinel').innerText = take.sentinel;
+                    document.getElementById('annotation-prophet').innerText = take.prophet;
+                }
+            }
+        });
+    });
+</script>

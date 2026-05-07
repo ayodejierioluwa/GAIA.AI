@@ -34,6 +34,10 @@
                     <option value="4.9,6.5">Niger Delta (Deepwater)</option>
                     <option value="8.5,8.2">Benue Trough (Frontier)</option>
                     <option value="6.2,7.0">Anambra Basin</option>
+                    <option value="13.2,13.8">Lake Chad Basin (Frontier)</option>
+                    <option value="6.4,2.8">Dahomey Basin (Offshore)</option>
+                    <option value="9.1,6.0">Bida Basin (Mid-Niger)</option>
+                    <option value="13.0,5.2">Sokoto Basin (Rift System)</option>
                 </select>
             </div>
 
@@ -45,6 +49,19 @@
                 </div>
             </div>
 
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(0, 255, 195, 0.05); border: 1px solid var(--neon-teal); border-radius: 4px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.7rem; color: var(--neon-teal); font-weight: bold;">LIVE DATA SYNC</span>
+                    <label class="switch">
+                        <input type="checkbox" id="live-sync-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div style="font-size: 0.55rem; color: var(--text-dim); margin-top: 5px;">
+                    Connect to Sentinel-2 STAC Hub for real-time spectral reflectance.
+                </div>
+            </div>
+
             <button class="cyber-btn" style="width: 100%; padding: 15px; margin-bottom: 10px;" onclick="runAnalysis()">
                 <i class="fas fa-satellite"></i> INITIATE SCAN
             </button>
@@ -53,10 +70,12 @@
             </button>
 
             <!-- Spectral Intelligence Guide -->
-            <div class="glass-panel" style="margin-top: 25px; padding: 15px; border-color: var(--neon-teal); background: rgba(0, 255, 195, 0.03);">
-                <h4 style="font-size: 0.65rem; color: var(--neon-teal); text-transform: uppercase; margin-bottom: 10px;">Spectral Intelligence</h4>
-                <div id="interpretation-guide" style="font-size: 0.7rem; color: var(--text-dim); line-height: 1.5;">
-                    Select a band to see mission-critical interpretation notes.
+            <div class="glass-panel" style="margin-top: 25px; padding: 15px; border-color: var(--neon-teal); background: rgba(0, 255, 195, 0.08); min-height: 120px;">
+                <h4 style="font-size: 0.7rem; color: var(--neon-teal); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid rgba(0,255,195,0.2); padding-bottom: 5px;">
+                    <i class="fas fa-book-open"></i> MISSION GUIDE
+                </h4>
+                <div id="interpretation-guide" style="font-size: 0.75rem; color: var(--text-primary); line-height: 1.6;">
+                    Select a band and click 'INITIATE SCAN' to see what GAIA is detecting from orbit.
                 </div>
             </div>
 
@@ -70,18 +89,20 @@
 
         <!-- Right: Visualization Workspace -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div class="glass-panel" style="flex: 1; padding: 0; min-height: 500px; position: relative; overflow: hidden; background: #000;">
+            <div class="glass-panel" style="flex: 1; padding: 0; height: 600px; position: relative; overflow: hidden; background: #000; border: 1px solid var(--neon-teal);">
+                <div id="satellite-plot" style="width: 100%; height: 100%;"></div>
+                
+                <!-- Scanning Overlay -->
                 <div id="scanning-overlay" style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,255,195,0.03); display:none; z-index:10; pointer-events:none;">
                     <div style="width:100%; height:2px; background:var(--neon-teal); position:absolute; top:0; animation:scanAnim 2s linear infinite; box-shadow:0 0 15px var(--neon-teal);"></div>
                 </div>
-                <div id="satellite-plot" style="width: 100%; height: 600px;"></div>
                 
                 <!-- Legend Overlay -->
                 <div class="glass-panel" style="position: absolute; bottom: 20px; right: 20px; padding: 10px; width: 120px; font-size: 0.6rem; z-index: 5;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                         <span>Intensity</span>
                     </div>
-                    <div style="height: 10px; width: 100%; background: linear-gradient(to right, #440154, #21918c, #fde725); border-radius: 2px; margin-bottom: 5px;"></div>
+                    <div id="legend-bar" style="height: 10px; width: 100%; background: linear-gradient(to right, #440154, #21918c, #fde725); border-radius: 2px; margin-bottom: 5px;"></div>
                     <div style="display: flex; justify-content: space-between; color: var(--text-dim);">
                         <span>LOW</span>
                         <span>HIGH</span>
@@ -92,6 +113,17 @@
             <div id="interpretation-panel" class="glass-panel" style="display:none; margin-top: 20px; border-left: 4px solid #FFD700; background: rgba(255, 215, 0, 0.02); padding: 25px;">
                 <h3 style="color: #FFD700; margin-bottom: 15px; font-size: 0.9rem;"><i class="fas fa-brain"></i> ORACLE TEMPORAL INTERPRETATION</h3>
                 <div id="interpretation-text" style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary); font-family: 'Roboto Mono';"></div>
+            </div>
+
+            <!-- Global Intelligence Map -->
+            <div class="glass-panel" style="padding: 0; overflow: hidden; border-color: var(--neon-blue); background: rgba(0,212,255,0.02);">
+                <div style="padding: 12px 15px; background: rgba(0, 212, 255, 0.05); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.75rem; letter-spacing: 2px; color: var(--neon-blue); font-weight: 800;">
+                        <i class="fas fa-network-wired"></i> GLOBAL INTELLIGENCE NETWORK
+                    </span>
+                    <span class="cyber-badge" style="color: var(--neon-blue); font-size: 0.55rem;">NEURAL PULSE ACTIVE</span>
+                </div>
+                <div id="global-intel-map" style="height: 300px; width: 100%;"></div>
             </div>
 
             <div id="anomaly-pings" style="display: flex; gap: 10px; overflow-x: auto;">
@@ -112,11 +144,11 @@
 
 <script>
     const interpretationData = {
-        "TRUE_COLOR": "Standard optical view. Used for surface site mapping and locating active drilling infrastructure or flares.",
-        "NDVI": "Normalized Difference Vegetation Index. Hydrocarbon seepage often stresses or hyper-stimulates surface flora. High delta anomalies suggest subsurface leakage.",
-        "THERMAL_IR": "Measures heat radiation. Essential for identifying active gas flaring, pipeline leaks, or deeper geothermal anomalies associated with faulting.",
-        "SAR": "Synthetic Aperture Radar. Detects surface roughness. On water, oil slicks dampen waves, appearing as high-contrast dark patches against the reflective ocean surface.",
-        "SWIR": "Short-Wave Infrared. Penetrates through haze and light smoke. Excellent for lithological mapping and identifying specific mineral alteration zones."
+        "TRUE_COLOR": "<strong>TRUE COLOR:</strong> This is exactly what a human would see from space. We use it to verify oil rigs and infrastructure in the Niger Delta.",
+        "NDVI": "<strong>VEGETATION HEALTH:</strong> We look for 'brown spots' in green forests. If plants are dying near a pipeline, it suggests an underground oil leak.",
+        "THERMAL_IR": "<strong>HEAT SENSORS:</strong> Bright spots show extreme heat. This is perfect for spotting gas flaring or machinery heat in deepwater fields.",
+        "SAR": "<strong>RADAR (OIL SLICKS):</strong> Oil makes the ocean look 'smooth' to radar. Dark patches on this map are high-confidence signs of oil leaking from the seabed.",
+        "SWIR": "<strong>ROCK TYPE:</strong> This band sees through haze to identify different types of rocks at the surface, helping us predict where oil is trapped inland."
     };
 
     function updateCoords() {
@@ -131,22 +163,45 @@
         if(typeof playSfx === 'function') playSfx();
         const mode = document.getElementById('spectral-mode').value;
         const coords = document.getElementById('basin-target').value.split(',');
+        const live = document.getElementById('live-sync-toggle').checked;
         const overlay = document.getElementById('scanning-overlay');
         const telemetry = document.getElementById('telemetry-screen');
         const guide = document.getElementById('interpretation-guide');
         
         overlay.style.display = 'block';
         telemetry.innerHTML = `[SCAN] Initializing ${mode} spectrum analysis...<br>[SCAN] Handshaking with Sentinel Cluster...`;
+        if(live) telemetry.innerHTML += `<br>[LIVE] Querying STAC Index for recent pass...`;
         
         // Update guide
         guide.innerHTML = `<strong>${mode} MISSION LOGIC:</strong> ${interpretationData[mode] || "Analyzing multi-spectral data layers."}`;
 
-        fetch(`/api/satellite/analyze?lat=${coords[0]}&lon=${coords[1]}&mode=${mode}`)
+        fetch(`/api/satellite/analyze?lat=${coords[0]}&lon=${coords[1]}&mode=${mode}&live=${live}`)
             .then(r => r.json())
             .then(fig => {
-                Plotly.newPlot('satellite-plot', fig.data, fig.layout);
+                // Restore Metadata display
+                if(fig.live_data) {
+                    telemetry.innerHTML += `<br>[OK] Signal Found: ${fig.platform}`;
+                    telemetry.innerHTML += `<br>[OK] Pass Date: ${fig.timestamp.split('T')[0]}`;
+                    telemetry.innerHTML += `<br>[OK] Cloud Cover: ${fig.cloud_cover.toFixed(1)}%`;
+                }
+
+                // Update Legend Bar based on mode
+                const bar = document.getElementById('legend-bar');
+                if(mode === 'THERMAL_IR') bar.style.background = 'linear-gradient(to right, #440154, #21918c, #fde725)';
+                else if(mode === 'NDVI') bar.style.background = 'linear-gradient(to right, #f7fcf5, #74c476, #00441b)';
+                else if(mode === 'SAR') bar.style.background = 'linear-gradient(to right, #000033, #000080, #00bfff)';
+                else bar.style.background = 'linear-gradient(to right, #1a9850, #ffffbf, #a50026)';
+
+                Plotly.react('satellite-plot', fig.data, {
+                    ...fig.layout,
+                    margin: {l: 0, r: 0, b: 0, t: 0},
+                    height: 600,
+                    width: document.getElementById('satellite-plot').clientWidth,
+                    autosize: true
+                }, {responsive: true, displayModeBar: false});
+                
                 overlay.style.display = 'none';
-                telemetry.innerHTML += `<br>[OK] Spectrum Matrix Rendered.<br>[INFO] Anomaly Detectors Online.`;
+                telemetry.innerHTML += `<br>[OK] Spectrum Matrix Rendered.`;
                 telemetry.scrollTop = telemetry.scrollHeight;
             });
     }
@@ -182,7 +237,52 @@
             });
     }
 
+    function renderGlobalIntel() {
+        const data = [{
+            type: 'scattergeo',
+            mode: 'markers+text',
+            lat: [4.9, 8.5, 6.2, 13.2, 6.4],
+            lon: [6.5, 8.2, 7.0, 13.8, 2.8],
+            text: ['NIGER DELTA', 'BENUE TROUGH', 'ANAMBRA', 'LAKE CHAD', 'DAHOMEY'],
+            marker: {
+                size: [20, 12, 15, 10, 12],
+                color: ['#00d4ff', '#00ffc3', '#ffab00', '#00ffc3', '#00d4ff'],
+                opacity: 0.8,
+                symbol: 'circle',
+                line: { color: 'white', width: 1 }
+            },
+            textposition: 'top center',
+            textfont: { family: 'Space Grotesk', size: 10, color: 'white' }
+        }];
+
+        const layout = {
+            geo: {
+                scope: 'africa',
+                showland: true,
+                landcolor: '#080a0f',
+                showlakes: true,
+                lakecolor: '#001a33',
+                showocean: true,
+                oceancolor: '#000810',
+                projection: { type: 'mercator' },
+                center: { lat: 9, lon: 8 },
+                lonaxis: { range: [2, 15] },
+                lataxis: { range: [4, 14] },
+                bgcolor: '#000'
+            },
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            paper_bgcolor: '#000',
+            plot_bgcolor: '#000',
+            showlegend: false
+        };
+
+        Plotly.newPlot('global-intel-map', data, layout, {displayModeBar: false});
+    }
+
     // Default load
-    setTimeout(runAnalysis, 500);
+    setTimeout(() => {
+        runAnalysis();
+        renderGlobalIntel();
+    }, 500);
 </script>
 创新思维

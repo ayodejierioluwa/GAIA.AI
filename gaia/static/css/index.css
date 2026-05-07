@@ -98,7 +98,18 @@ body {
 
 .sidebar-nav {
     flex: 1;
-    padding: 20px 0;
+    padding: 10px 0;
+    overflow-y: auto;
+}
+
+.nav-category {
+    padding: 20px 24px 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
 }
 
 .nav-item {
@@ -131,6 +142,13 @@ body {
     border-radius: 16px;
     padding: 24px;
     box-shadow: var(--shadow);
+    transition: var(--trans);
+}
+
+.glass-panel:hover {
+    border-color: rgba(0, 255, 195, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 195, 0.1);
+    transform: translateY(-2px);
 }
 
 .cyber-btn {
@@ -219,23 +237,46 @@ body {
    ORACLE DRAWER (Interactive AI)
    ───────────────────────────────────────────────────────────── */
 .oracle-drawer {
-    width: 400px;
+    width: 750px;
     height: 100vh;
-    background: rgba(8, 10, 15, 0.95);
+    background: rgba(8, 10, 15, 0.98);
     backdrop-filter: blur(25px);
     border-left: 1px solid var(--neon-teal);
     position: fixed;
-    right: -400px;
+    right: -750px;
     top: 0;
     z-index: 2000;
     transition: var(--trans);
     display: flex;
     flex-direction: column;
-    box-shadow: -10px 0 30px rgba(0, 255, 195, 0.1);
+    box-shadow: -10px 0 30px rgba(0, 255, 195, 0.15);
 }
 
 .oracle-drawer.open {
     right: 0;
+}
+
+.oracle-body-split {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.oracle-strat-pane {
+    width: 290px;
+    border-right: 1px solid var(--glass-border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.35);
+    overflow-y: auto;
+}
+
+.oracle-chat-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .oracle-header {
@@ -368,4 +409,171 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--neon-teal);
+}
+/* ─────────────────────────────────────────────────────────────
+   PHASE 4: NEURAL PULSE EFFECTS
+   ───────────────────────────────────────────────────────────── */
+.neural-pulse-active {
+    position: relative;
+    overflow: hidden;
+}
+
+.neural-pulse-active::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 150deg,
+        rgba(0, 255, 195, 0.1) 180deg,
+        transparent 210deg,
+        transparent 360deg
+    );
+    animation: rotatePulse 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rotatePulse {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.data-stream-item {
+    position: relative;
+    padding: 12px;
+    border-left: 2px solid var(--neon-blue);
+    background: rgba(0, 212, 255, 0.02);
+    margin-bottom: 10px;
+    transition: var(--trans);
+    animation: slideInRight 0.4s ease-out;
+}
+
+.data-stream-item:hover {
+    background: rgba(0, 212, 255, 0.05);
+    border-left-width: 4px;
+    padding-left: 14px;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.status-glow {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 10px currentColor;
+    animation: glowPulse 2s infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+.neural-node-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    background-image: radial-gradient(rgba(0, 255, 195, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: backgroundMove 60s linear infinite;
+}
+
+@keyframes backgroundMove {
+    from { background-position: 0 0; }
+    to { background-position: 500px 500px; }
+}
+
+.cyber-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid currentColor;
+    background: rgba(255, 255, 255, 0.05);
+}
+/* ─────────────────────────────────────────────────────────────
+   PHASE 5: COLLABORATIVE INTELLIGENCE
+   ───────────────────────────────────────────────────────────── */
+.agent-bubble {
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    position: relative;
+    border: 1px solid var(--glass-border);
+    animation: slideInUp 0.3s ease-out;
+}
+
+.agent-bubble-sentinel {
+    background: rgba(0, 255, 195, 0.05);
+    border-left: 4px solid var(--neon-teal);
+}
+
+.agent-bubble-prophet {
+    background: rgba(243, 156, 18, 0.05);
+    border-left: 4px solid var(--warning);
+}
+
+.agent-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.debate-synthesis-card {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 195, 0.05));
+    border: 1px solid var(--neon-blue);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--neon-teal);
+    margin-left: 4px;
+    animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.collaborative-pulse {
+    animation: brainPulse 2s infinite ease-in-out;
+}
+
+@keyframes brainPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--neon-blue)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--neon-blue)); }
 }

@@ -9,6 +9,11 @@
             </div>
             <div style="font-size: 0.55rem; color: var(--text-dim); margin-top: 5px;" id="reasoning-mode">MODE: FOUNDATIONAL LOGIC</div>
         </div>
+        <div class="glass-panel" style="text-align: center; border-color: var(--neon-blue); display: flex; flex-direction: column; justify-content: center;">
+            <h4 style="font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;">Brent Crude</h4>
+            <div style="font-size: 1.2rem; color: var(--neon-blue); margin: 5px 0; font-family: 'Roboto Mono'; font-weight: 800;">$82.40 <i class="fas fa-caret-up" style="font-size: 0.8rem; color: var(--neon-teal);"></i></div>
+            <div style="font-size: 0.5rem; color: var(--text-dim);">BONNY LIGHT: $84.12</div>
+        </div>
         <div class="glass-panel" style="text-align: center;">
             <h4 style="color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Extracted Facts</h4>
             <div style="font-size: 2.5em; color: var(--neon-teal); margin: 10px 0; font-family: 'Roboto Mono'; font-weight: 800;">{{ knowledge_count }}</div>
@@ -34,18 +39,58 @@
 
     <!-- Main Workspace -->
     <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">
-        <!-- Left: Activity Log -->
+        <!-- Left Column -->
         <div style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- OSINT Headlines Panel -->
+            <div class="glass-panel" style="background: rgba(0, 255, 195, 0.02); border-color: var(--neon-teal); padding: 0; overflow: hidden;">
+                <div style="padding: 12px 15px; background: rgba(0, 255, 195, 0.05); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.75rem; letter-spacing: 2px; color: var(--neon-teal); font-weight: 800;">
+                        <i class="fas fa-globe-africa"></i> OSINT HEADLINES
+                    </span>
+                    <span class="cyber-badge" style="font-size: 0.55rem;">LIVE TELEMETRY</span>
+                </div>
+                <div id="osint-headlines" style="padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="text-align: center; grid-column: span 2; padding: 20px; color: var(--text-dim);">
+                        <i class="fas fa-satellite fa-spin"></i> SYNCING OSINT CORE...
+                    </div>
+                </div>
+            </div>
             <div class="glass-panel" style="padding: 0; overflow: hidden; height: 100%;">
                 <div style="padding: 15px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between;">
-                    <span style="font-size: 0.8rem; letter-spacing: 1px;">📡 SYNAPTIC ACTIVITY STREAM</span>
-                    <span style="color: var(--neon-teal); font-size: 0.7rem;">LIVE FEED ACTIVATED</span>
+                    <span style="font-size: 0.8rem; letter-spacing: 1px;"><i class="fas fa-satellite-dish status-glow" style="color: var(--neon-teal);"></i> SYNAPTIC ACTIVITY STREAM</span>
+                    <span class="cyber-badge" style="color: var(--neon-teal);">LIVE FEED ACTIVATED</span>
                 </div>
-                <div id="learning-feed" style="height: 450px; overflow-y: auto; background: rgba(0,0,0,0.3); color: #00ffc3; font-family: 'Roboto Mono', monospace; padding: 20px; font-size: 0.75em;">
+                <div id="learning-feed" style="height: 300px; overflow-y: auto; background: rgba(0,0,0,0.3); color: #00ffc3; font-family: 'Roboto Mono', monospace; padding: 20px; font-size: 0.75em;">
                     {% for log in logs %}
                         <div style="margin-bottom: 8px; border-left: 2px solid rgba(0, 255, 195, 0.2); padding-left: 10px;">
                             <span style="color: var(--text-dim);">[{{ log.timestamp }}]</span> 
                             <span style="color: var(--neon-blue);">{{ log.event_type }}:</span> {{ log.description }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- GAIA Neural Thought Stream -->
+            <div class="glass-panel" style="padding: 0; overflow: hidden; flex: 1; border-color: var(--neon-blue);">
+                <div style="padding: 15px; background: rgba(0,212,255,0.05); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between;">
+                    <span style="font-size: 0.8rem; letter-spacing: 1px; color: var(--neon-blue);"><i class="fas fa-brain status-glow" style="color: var(--neon-blue);"></i> GAIA NEURAL THOUGHT STREAM</span>
+                    <span class="cyber-badge" style="color: var(--neon-blue);">REASONING CORE ACTIVE</span>
+                </div>
+                <div id="thought-stream" style="height: 250px; overflow-y: auto; background: rgba(0,212,255,0.02); padding: 20px;">
+                    {% for thought in thoughts %}
+                        <div class="glass-panel neural-pulse-active" style="margin-bottom: 15px; border-left: 3px solid var(--neon-blue); background: rgba(0,212,255,0.03); padding: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-dim); margin-bottom: 8px;">
+                                <span style="color: var(--neon-blue); font-weight: bold;">{{ thought.entity.upper() }} ASSESSMENT</span>
+                                <span>CONFIDENCE: {{ (thought.confidence * 100)|int }}%</span>
+                            </div>
+                            <div style="font-size: 0.85rem; line-height: 1.5; color: var(--text-primary);">
+                                {{ thought.description | replace('\n', '<br>') | safe }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; color: var(--text-dim); margin-top: 50px;">
+                            <i class="fas fa-brain fa-pulse" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="font-size: 0.8rem;">Awaiting neural assessment trigger...</p>
                         </div>
                     {% endfor %}
                 </div>
@@ -56,6 +101,8 @@
         <div style="display: flex; flex-direction: column; gap: 20px;">
             <!-- Neural Mesh Viz -->
             <div class="glass-panel" style="height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden;">
+                <div class="neural-node-bg"></div>
+                <div class="neural-pulse-overlay" id="global-loader"></div>
                 <div class="pulse-ring" style="position: absolute; width: 80px; height: 80px; border-color: rgba(0, 255, 195, 0.3);"></div>
                 <i class="fas fa-brain" style="font-size: 2.5rem; color: var(--neon-teal); z-index: 1;"></i>
                 <div style="margin-top: 15px; text-align: center; z-index: 1;">
@@ -63,10 +110,26 @@
                 </div>
             </div>
 
-            <!-- Command Console -->
-            <div class="glass-panel" style="padding: 20px; background: rgba(255, 77, 77, 0.02); border-color: rgba(255, 77, 77, 0.2);">
-                <button class="cyber-btn" style="width: 100%; border-color: var(--error); color: var(--error); margin-bottom: 15px;" onclick="triggerGrowth()">
-                    <i class="fas fa-bolt"></i> TRIGGER GROWTH
+            <!-- Action Center (Console) -->
+            <div class="glass-panel" style="padding: 20px; background: rgba(0, 255, 195, 0.05); border-color: var(--neon-teal);">
+                <h4 style="font-size: 0.8rem; color: var(--neon-teal); margin-bottom: 15px; letter-spacing: 2px;">⚡ ACTION CENTER</h4>
+                <button class="cyber-btn" style="width: 100%; border-color: var(--neon-teal); color: var(--neon-teal); margin-bottom: 10px;" onclick="triggerGrowth()">
+                    <i class="fas fa-sync-alt"></i> TRIGGER NEURAL PULSE
+                </button>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <label class="cyber-badge" style="flex: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; color: var(--neon-blue);">
+                        <input type="checkbox" id="collab-mode-toggle" style="display: none;" onchange="this.parentElement.style.background = this.checked ? 'var(--neon-blue-dim)' : 'transparent'">
+                        <i class="fas fa-users"></i> COLLABORATIVE MODE
+                    </label>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="collab-query-input" class="cyber-input" style="font-size: 0.7rem; margin-bottom: 8px;" placeholder="Enter complex query for debate...">
+                    <button class="cyber-btn" style="width: 100%; font-size: 0.7rem;" onclick="initiateDashboardDebate()">
+                        <i class="fas fa-project-diagram"></i> INITIATE DEBATE
+                    </button>
+                </div>
+                <button class="cyber-btn" style="width: 100%; border-color: var(--neon-blue); color: var(--neon-blue); margin-bottom: 15px;" onclick="location.href='/api/download-report/latest_audit.pdf'">
+                    <i class="fas fa-file-pdf"></i> GENERATE ASSET AUDIT
                 </button>
                 <div id="growth-spinner" style="display: none; text-align: center; margin-bottom: 15px;">
                     <div class="fas fa-sync fa-spin" style="color: var(--neon-teal);"></div>
@@ -90,14 +153,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Neural Debate Console (Floating Workspace) -->
+    <div id="debate-console" style="display: none; position: fixed; top: 10%; left: 10%; width: 80%; height: 80%; z-index: 2500; background: rgba(8, 10, 15, 0.98); border: 1px solid var(--neon-blue); border-radius: 20px; box-shadow: 0 0 100px rgba(0, 212, 255, 0.2); flex-direction: column; overflow: hidden;" class="page-transition">
+        <div style="padding: 20px; background: rgba(0, 212, 255, 0.05); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fas fa-brain collaborative-pulse" style="color: var(--neon-blue); font-size: 1.5rem;"></i>
+                <span style="letter-spacing: 3px; font-weight: 800; color: var(--neon-blue);">COLLABORATIVE NEURAL DEBATE</span>
+            </div>
+            <button onclick="closeDebate()" style="background: transparent; border: none; color: var(--text-dim); cursor: pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="debate-body" style="flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; gap: 30px;">
+            <!-- Debate steps will be injected here -->
+        </div>
+        <div id="debate-footer" style="padding: 20px; border-top: 1px solid var(--glass-border); text-align: center;">
+            <span id="debate-status" style="font-size: 0.7rem; color: var(--neon-teal); font-family: 'Roboto Mono';">SYNCHRONIZING SPECIALIST CORES...</span>
+        </div>
+    </div>
 </div>
 
 <script>
     const feed = document.getElementById('learning-feed');
     if(feed) feed.scrollTop = feed.scrollHeight;
 
-    let pollInterval = null;
-    let isGrowthActive = false; // Prevents infinite reload
+    var pollInterval = null;
+    var isGrowthActive = false; // Prevents infinite reload
 
     function startPolling() {
         if(pollInterval) return;
@@ -145,11 +225,47 @@
                         isGrowthActive = false;
                         stopPolling();
                         alert("Growth cycle complete. Knowledge base expanded.");
-                        // Only reload manually if needed or update UI via SPA
-                        // For now, let's keep it stable without reload
                     }
                 });
         }, 1000);
+
+        setInterval(fetchLatestThoughts, 10000);
+        setInterval(fetchOSINT, 15000);
+        fetchLatestThoughts();
+        fetchOSINT();
+    }
+
+    function fetchOSINT() {
+        fetch('/api/intelligence/news')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const container = document.getElementById('osint-headlines');
+                    container.innerHTML = '';
+                    data.headlines.forEach(news => {
+                        const item = document.createElement('div');
+                        item.style = 'padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid ' + (news.impact === 'CRITICAL' ? 'var(--neon-blue)' : 'var(--neon-teal)');
+                        item.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="font-size: 0.55rem; color: var(--text-dim);">${news.category}</span>
+                                <span style="font-size: 0.55rem; font-weight: 800; color: ${news.impact === 'CRITICAL' ? 'var(--neon-blue)' : 'var(--neon-teal)'}">${news.impact}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; font-weight: 600; line-height: 1.3;">${news.title}</div>
+                        `;
+                        container.appendChild(item);
+                    });
+                }
+            });
+    }
+
+    function fetchLatestThoughts() {
+        fetch('/api/intelligence/latest-thoughts')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update thought stream if needed or let template handle initial
+                }
+            });
     }
     
     startPolling();
@@ -168,10 +284,116 @@
         
         isGrowthActive = true;
         document.getElementById('growth-spinner').style.display = 'block';
-        fetch('/api/intelligence/trigger-growth', { method: 'POST' })
+        fetch('/api/intelligence/manual-trigger', { method: 'POST' })
             .then(r => r.json())
             .then(data => {
                 startPolling();
             });
     }
+
+    function openDebate(query) {
+        document.getElementById('debate-console').style.display = 'flex';
+        const body = document.getElementById('debate-body');
+        body.innerHTML = '';
+        
+        const collabMode = document.getElementById('collab-mode-toggle').checked;
+        const endpoint = collabMode ? '/api/intelligence/debate' : '/api/intelligence/reason';
+        
+        appendDebateStep("SENTINEL", "Initializing Geospatial Core...", "sentinel");
+        
+        fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: query })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (collabMode) {
+                    body.innerHTML = ''; // Clear init steps
+                    renderCollaborativeFlow(data);
+                } else {
+                    appendDebateStep("GAIA CORE", data.response, "arbiter");
+                }
+            }
+        });
+    }
+
+    function initiateDashboardDebate() {
+        const input = document.getElementById('collab-query-input');
+        if (!input.value.trim()) return;
+        openDebate(input.value);
+        input.value = '';
+    }
+
+    function closeDebate() {
+        document.getElementById('debate-console').style.display = 'none';
+    }
+
+    function appendDebateStep(agent, text, type) {
+        const body = document.getElementById('debate-body');
+        const bubble = document.createElement('div');
+        bubble.className = `agent-bubble agent-bubble-${type}`;
+        bubble.innerHTML = `
+            <div class="agent-label"><i class="fas fa-${type === 'sentinel' ? 'satellite' : type === 'prophet' ? 'chart-line' : 'brain'}"></i> ${agent}</div>
+            <div class="agent-content">${text}</div>
+        `;
+        body.appendChild(bubble);
+        body.scrollTop = body.scrollHeight;
+    }
+
+    async function renderCollaborativeFlow(data) {
+        const body = document.getElementById('debate-body');
+        
+        // 1. Sentinel
+        appendDebateStep("GEOSPATIAL SENTINEL", "", "sentinel");
+        await typeText(data.sentinel, body.lastElementChild.querySelector('.agent-content'));
+        
+        // 2. Prophet
+        appendDebateStep("ECONOMIC PROPHET", "", "prophet");
+        await typeText(data.prophet, body.lastElementChild.querySelector('.agent-content'));
+        
+        // 3. Synthesis
+        const synthesisCard = document.createElement('div');
+        synthesisCard.className = 'debate-synthesis-card';
+        synthesisCard.innerHTML = `
+            <div class="agent-label" style="color: var(--neon-blue);"><i class="fas fa-brain"></i> STRATEGIC ARBITER</div>
+            <div class="agent-content" style="color: white; font-size: 1rem; line-height: 1.6;"></div>
+        `;
+        body.appendChild(synthesisCard);
+        await typeText(data.synthesis, synthesisCard.querySelector('.agent-content'));
+        
+        document.getElementById('debate-status').innerText = "DEBATE SYNTHESIZED. STRATEGIC GO-AHEAD CONFIRMED.";
+    }
+
+    function typeText(text, element) {
+        return new Promise(resolve => {
+            let i = 0;
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            element.appendChild(cursor);
+            
+            const interval = setInterval(() => {
+                const char = text.charAt(i);
+                if (char === '\n') {
+                    cursor.before(document.createElement('br'));
+                } else {
+                    cursor.before(char);
+                }
+                i++;
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    cursor.remove();
+                    resolve();
+                }
+                document.getElementById('debate-body').scrollTop = document.getElementById('debate-body').scrollHeight;
+            }, 5);
+        });
+    }
+
+    // Hijack the sidebar search if possible or add a global query trigger
+    // For now, let's add a listener to the window for a 'search' event
+    window.addEventListener('gaia-query', (e) => {
+        openDebate(e.detail.query);
+    });
 </script>
