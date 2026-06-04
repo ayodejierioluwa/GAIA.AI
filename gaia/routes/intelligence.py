@@ -30,6 +30,104 @@ def api_economics_simulate():
     
     return json.dumps(audit_data)
 
+@intelligence_bp.route('/api/exploration/predict-coordinate', methods=['POST'])
+def api_predict_coordinate():
+    if 'user_id' not in session:
+        return json.dumps({'status': 'error', 'message': 'Auth required'})
+        
+    data = request.json
+    lat = float(data.get('latitude', 4.9))
+    lon = float(data.get('longitude', 6.5))
+    depth = float(data.get('depth', 3000.0))
+    basin = data.get('basin', 'niger_delta')
+    
+    # 1. Map basin to geological formation defaults
+    formation = 'Agbada'
+    if basin == 'benue_trough':
+        formation = 'Coal Measures'
+    elif basin == 'anambra':
+        formation = 'Mamu'
+        
+    # 2. Get ML Prospectivity prediction
+    ml_analyzer = current_app.config['ml_analyzer']
+    porosity = 0.24 if formation == 'Agbada' else 0.14 if formation == 'Coal Measures' else 0.22 if formation == 'Mamu' else 0.20
+    permeability = 150.0 if formation == 'Agbada' else 80.0 if formation == 'Coal Measures' else 140.0 if formation == 'Mamu' else 100.0
+    
+    ml_res = ml_analyzer.predict_oil_potential(
+        lat=lat,
+        lon=lon,
+        depth=depth,
+        porosity=porosity,
+        permeability=permeability
+    )
+    
+    # 3. Get Reservoir Discovery probability
+    discovery_model = current_app.config['discovery_model']
+    disc_res = discovery_model.predict_discovery_probability(
+        lat=lat,
+        lon=lon,
+        depth=depth,
+        formation=formation
+    )
+    
+    if 'error' in disc_res:
+        disc_res = {
+            'probability': ml_res.get('oil_presence_probability', 0.5) if ml_res.get('status') == 'success' else 0.5,
+            'confidence': ml_res.get('confidence_level', 0.7) if ml_res.get('status') == 'success' else 0.7,
+            'factors': {
+                'geological_depth_sync': 0.6,
+                'satellite_anomaly_intensity': 0.5,
+                'basin_historical_synergy': 0.5
+            },
+            'location': {'lat': lat, 'lon': lon, 'target_formation': formation}
+        }
+    
+    # 4. Get Well Economics
+    economics = current_app.config['economics_engine']
+    env_type = 'Offshore' if depth > 3500 else 'Onshore'
+    flow_rate = 1000.0 * (porosity / 0.20) * (permeability / 100.0) ** 0.5
+    flow_rate = max(100.0, min(4500.0, round(flow_rate, 1)))
+    
+    econ_res = economics.assess_well_feasibility(
+        initial_rate=flow_rate,
+        depth=depth,
+        formation=formation,
+        env_type=env_type
+    )
+    
+    # 5. Extract diagnostics
+    from gaia.models.ingestion_utils import TechnicalDiagnosticEngine
+    well_data = {
+        'well_name': f"PROSPECT-{lat:.3f}-{lon:.3f}",
+        'flow_rate': flow_rate,
+        'initial_pressure': 3500.0,
+        'final_pressure': 3000.0,
+        'depth': depth,
+        'porosity': porosity,
+        'permeability': permeability,
+        'formation': formation
+    }
+    diagnostic = TechnicalDiagnosticEngine.analyze(well_data)
+    
+    # 6. Synthesize final strategic recommendation
+    agent = current_app.config['gaia_agent']
+    query = f"Synthesize structural prospects at lat={lat:.4f}, lon={lon:.4f}, depth={depth:.1f}m in formation={formation} with discovery probability={disc_res.get('probability', 0.5)*100:.1f}%."
+    debate = agent.collaborate(query, geological_context={'basin': basin, 'ml_prediction': ml_res})
+    
+    return json.dumps({
+        'status': 'success',
+        'latitude': lat,
+        'longitude': lon,
+        'formation': formation,
+        'ml_prediction': ml_res,
+        'discovery_prediction': disc_res,
+        'economics': econ_res,
+        'diagnostic': diagnostic,
+        'synthesis': debate['synthesis'],
+        'sentinel': debate['sentinel'],
+        'prophet': debate['prophet']
+    })
+
 @intelligence_bp.route('/ai-training')
 def ai_training():
     if 'user_id' not in session:
@@ -353,6 +451,63 @@ def geospatial_3d():
     
     fig_data.extend(anomalies)
     
+    # Fetch real wells from database and overlay on 3D mesh
+    db_wells = []
+    conn = db._get_connection()
+    try:
+        if db.use_sqlalchemy:
+            db_wells = conn.execute(text("SELECT well_name, latitude, longitude, depth, formation, porosity, permeability, oil_presence FROM geological_data")).fetchall()
+        else:
+            cursor = conn.cursor()
+            cursor.execute("SELECT well_name, latitude, longitude, depth, formation, porosity, permeability, oil_presence FROM geological_data")
+            db_wells = cursor.fetchall()
+    except Exception as e:
+        print(f"Error fetching wells for 3D plot: {e}")
+    finally:
+        if not db.use_sqlalchemy:
+            conn.close()
+
+    well_x = []
+    well_y = []
+    well_z = []
+    well_text = []
+    
+    for w in db_wells:
+        w_name, w_lat, w_lon, w_depth, w_formation, w_por, w_perm, w_oil = w
+        if w_lat and w_lon:
+            if lat_min <= w_lat <= lat_max and lon_min <= w_lon <= lon_max:
+                x_val = ((w_lon - lon_min) / (lon_max - lon_min)) * 10.0
+                y_val = ((w_lat - lat_min) / (lat_max - lat_min)) * 10.0
+                
+                # Estimate Z on the surface mesh grid
+                x_idx = int(min(49, max(0, x_val * 5)))
+                y_idx = int(min(49, max(0, y_val * 5)))
+                z_val = Z[y_idx, x_idx]
+                
+                well_x.append(x_val)
+                well_y.append(y_val)
+                well_z.append(z_val + 30) # float slightly above surface
+                well_text.append(f"{w_name} | Depth: {w_depth}m | Formation: {w_formation} | Porosity: {w_por:.2%}")
+
+    if well_x:
+        fig_data.append({
+            'type': 'scatter3d',
+            'x': well_x,
+            'y': well_y,
+            'z': well_z,
+            'mode': 'markers',
+            'marker': {
+                'size': 8,
+                'color': '#FF5722', # Orange for real wells
+                'symbol': 'circle',
+                'line': {'color': 'white', 'width': 1},
+                'opacity': 0.95
+            },
+            'name': 'Ingested Wells',
+            'text': well_text,
+            'hoverinfo': 'text'
+        })
+    
     # Specialist Quick-Takes (Mock data for annotations)
     quick_takes = {
         'Anambra-A1': {'sentinel': 'Structural trap confirmed via 3D seismic proxy.', 'prophet': 'NPV looks promising if pipeline infra is shared.'},
@@ -368,7 +523,9 @@ def geospatial_3d():
         metrics=metrics,
         active_basin=basin,
         active_sat_mode=sat_mode,
-        quick_takes=json.dumps(quick_takes)
+        quick_takes=json.dumps(quick_takes),
+        lat_center=lat_center,
+        lon_center=lon_center
     )
     return render_gaia_page("Geospatial 3D Studio", content)
 

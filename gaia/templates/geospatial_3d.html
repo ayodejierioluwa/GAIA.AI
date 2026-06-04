@@ -35,21 +35,58 @@
                 </div>
             </div>
 
-            <!-- Agent Annotation Overlay -->
-            <div id="agent-annotation-card" style="display: none; position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 100; background: rgba(8, 10, 15, 0.95); border: 1px solid var(--neon-blue); border-radius: 12px; padding: 15px;" class="page-transition">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span id="annotation-title" style="font-weight: 800; color: var(--neon-blue); font-size: 0.7rem; letter-spacing: 2px;">ANOMALY ID: A1</span>
+            <!-- Upgraded Prospect Details Overlay -->
+            <div id="agent-annotation-card" style="display: none; position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 100; background: rgba(8, 10, 15, 0.98); border: 1px solid var(--neon-blue); border-radius: 12px; padding: 18px; box-shadow: 0 0 30px rgba(0,212,255,0.25);" class="page-transition">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">
+                    <span id="annotation-title" style="font-weight: 800; color: var(--neon-blue); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;"><i class="fas fa-satellite-dish"></i> NEURAL PROSPECT IDENTIFIED</span>
                     <i class="fas fa-times" onclick="this.parentElement.parentElement.style.display='none'" style="cursor: pointer; color: var(--text-dim);"></i>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="agent-bubble agent-bubble-sentinel" style="margin: 0; padding: 10px; font-size: 0.7rem;">
-                        <div class="agent-label"><i class="fas fa-satellite"></i> SENTINEL TAKE</div>
-                        <div id="annotation-sentinel">...</div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                    <!-- Col 1: Subsurface Parameters -->
+                    <div style="font-size: 0.7rem; color: var(--text-primary); border-right: 1px solid var(--glass-border); padding-right: 10px;">
+                        <div style="color: var(--neon-teal); font-weight: bold; font-family: 'Space Grotesk'; margin-bottom: 8px; font-size: 0.75rem; letter-spacing: 1px;">GEOLOGY</div>
+                        <div style="margin-bottom: 5px;"><strong>Coordinates:</strong> <span id="well-coords">--</span></div>
+                        <div style="margin-bottom: 5px;"><strong>Formation:</strong> <span id="well-formation">--</span></div>
+                        <div style="margin-bottom: 5px;"><strong>Est. Depth:</strong> <span id="well-depth">--</span></div>
+                        <div style="margin-bottom: 5px;"><strong>Porosity / Perm:</strong> <span id="well-por-perm">--</span></div>
+                        <div style="margin-top: 8px; padding: 5px; background: rgba(0, 255, 195, 0.05); border: 1px dashed rgba(0, 255, 195, 0.2); border-radius: 4px; font-size: 0.65rem;" id="well-diagnostic">--</div>
                     </div>
-                    <div class="agent-bubble agent-bubble-prophet" style="margin: 0; padding: 10px; font-size: 0.7rem;">
-                        <div class="agent-label"><i class="fas fa-chart-line"></i> PROPHET TAKE</div>
-                        <div id="annotation-prophet">...</div>
+                    
+                    <!-- Col 2: Machine Learning -->
+                    <div style="font-size: 0.7rem; color: var(--text-primary); border-right: 1px solid var(--glass-border); padding-right: 10px;">
+                        <div style="color: var(--neon-blue); font-weight: bold; font-family: 'Space Grotesk'; margin-bottom: 8px; font-size: 0.75rem; letter-spacing: 1px;">PREDICTIVE AI</div>
+                        <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.1rem; font-weight: bold; color: var(--neon-blue);" id="well-oil-prob">0.0%</span>
+                            <span style="font-size: 0.55rem; color: var(--text-dim);">OIL PROBABILITY</span>
+                        </div>
+                        <div style="margin-bottom: 5px;"><strong>ML Confidence:</strong> <span id="well-confidence">--</span></div>
+                        <div style="margin-bottom: 5px;"><strong>Reservoir Score:</strong> <span id="well-reservoir-score">--</span></div>
+                        <div style="font-size: 0.65rem; color: var(--text-dim); line-height: 1.3;" id="well-rec">--</div>
                     </div>
+                    
+                    <!-- Col 3: Economics -->
+                    <div style="font-size: 0.7rem; color: var(--text-primary);">
+                        <div style="color: #FFD700; font-weight: bold; font-family: 'Space Grotesk'; margin-bottom: 8px; font-size: 0.75rem; letter-spacing: 1px;">FINANCIAL FEASIBILITY</div>
+                        <div style="margin-bottom: 5px; display: flex; justify-content: space-between;"><strong>CAPEX:</strong> <span id="well-capex">--</span></div>
+                        <div style="margin-bottom: 5px; display: flex; justify-content: space-between;"><strong>OPEX:</strong> <span id="well-opex">--</span></div>
+                        <div style="margin-bottom: 5px; display: flex; justify-content: space-between; color: var(--neon-teal);"><strong>NPV (10%):</strong> <span id="well-npv" style="font-weight: bold;">--</span></div>
+                        <div style="margin-bottom: 5px; display: flex; justify-content: space-between; color: #FFD700;"><strong>IRR:</strong> <span id="well-irr" style="font-weight: bold;">--</span></div>
+                        <div style="margin-top: 5px; font-size: 0.6rem; color: var(--text-dim); text-align: right;">PAYBACK: <span id="well-payback" style="color: white;">--</span></div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Collaborative Synthesis -->
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 6px; padding: 10px; font-size: 0.7rem; display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px;">
+                    <div style="font-weight: bold; color: var(--neon-blue); display: flex; align-items: center; gap: 5px;"><i class="fas fa-brain"></i> STRATEGIC ARBITER SYNTHESIS</div>
+                    <div style="line-height: 1.4; color: var(--text-dim); max-height: 50px; overflow-y: auto;" id="well-synthesis">...</div>
+                </div>
+
+                <!-- Sync Oracle button -->
+                <div style="display: flex; gap: 10px;">
+                    <button class="cyber-btn" style="flex: 1; padding: 8px; font-size: 0.65rem;" onclick="syncWithOracle()">
+                        <i class="fas fa-sync-alt"></i> SYNC ORACLE DRAWER COLUMN
+                    </button>
                 </div>
             </div>
         </div>
@@ -198,24 +235,138 @@
         };
         Plotly.newPlot('satellite-sync-plot', satData, layoutSat);
 
-        // Click Event for Annotations
+        // Click Event for Coordinate Analysis
         const plotEl = document.getElementById('geospatial-plot');
-        const quickTakes = {{ quick_takes | safe }};
-        
+        const latCenter = {{ lat_center }};
+        const lonCenter = {{ lon_center }};
+        window.currentPrediction = null; // Save globally so it can be synced
+
         plotEl.on('plotly_click', function(data){
             if (!data || !data.points || data.points.length === 0) return;
             const point = data.points[0];
-            if (point && point.data && point.data.type === 'scatter3d' && point.text) {
-                const title = point.text.split(':')[0].trim();
-                const take = quickTakes[title];
-                
-                if(take) {
-                    document.getElementById('agent-annotation-card').style.display = 'block';
-                    document.getElementById('annotation-title').innerText = `ANOMALY ID: ${title}`;
-                    document.getElementById('annotation-sentinel').innerText = take.sentinel;
-                    document.getElementById('annotation-prophet').innerText = take.prophet;
-                }
+            
+            // Map plotly click point coordinates [0, 10] back to Lat/Lon
+            let xPlot = point.x;
+            let yPlot = point.y;
+            let zPlot = point.z;
+            
+            // If zPlot is undefined (e.g. click was on scatter3d marker), look in point.data
+            if (zPlot === undefined && point.data && point.data.z) {
+                zPlot = point.data.z[point.pointNumber];
             }
+            
+            const lon = lonCenter - 0.5 + (xPlot / 10.0);
+            const lat = latCenter - 0.5 + (yPlot / 10.0);
+            const depth = Math.max(1000, Math.round(zPlot || 3000));
+            
+            // Query GAIA predictive APIs
+            queryCoordinate(lat, lon, depth);
         });
     });
+
+    function queryCoordinate(lat, lon, depth) {
+        const outTitle = document.getElementById('annotation-title');
+        const card = document.getElementById('agent-annotation-card');
+        
+        card.style.display = 'block';
+        outTitle.innerHTML = `<i class="fas fa-brain fa-pulse" style="color: var(--neon-blue);"></i> ANALYZING COORDINATE [${lat.toFixed(4)}, ${lon.toFixed(4)}]...`;
+        
+        fetch('/api/exploration/predict-coordinate', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                latitude: lat,
+                longitude: lon,
+                depth: depth,
+                basin: "{{ active_basin }}"
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.currentPrediction = data;
+                outTitle.innerHTML = `<i class="fas fa-satellite-dish"></i> PROSPECT AT [${lat.toFixed(4)}, ${lon.toFixed(4)}]`;
+                
+                // Geology details
+                document.getElementById('well-coords').innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                document.getElementById('well-formation').innerText = data.formation;
+                document.getElementById('well-depth').innerText = `${depth.toFixed(0)} m`;
+                
+                const ml = data.ml_prediction;
+                const disc = data.discovery_prediction;
+                const econ = data.economics;
+                
+                document.getElementById('well-por-perm').innerText = `${((ml.porosity_est || 0.22) * 100).toFixed(1)}% / ${(ml.permeability_est || 150.0).toFixed(0)} mD`;
+                document.getElementById('well-diagnostic').innerText = data.diagnostic;
+                
+                // Predictive AI details
+                const prob = (disc.probability * 100).toFixed(1);
+                document.getElementById('well-oil-prob').innerText = `${prob}%`;
+                document.getElementById('well-confidence').innerText = `${(disc.confidence * 100).toFixed(0)}%`;
+                document.getElementById('well-reservoir-score').innerText = `${(disc.factors.geological_depth_sync * 100).toFixed(0)}%`;
+                document.getElementById('well-rec').innerText = ml.recommendation || "N/A";
+                
+                // Economics details
+                document.getElementById('well-capex').innerText = `$${(econ.financials.total_capex / 1e6).toFixed(1)}M`;
+                document.getElementById('well-opex').innerText = `$${(econ.financials.operating_costs / 1e6).toFixed(1)}M/yr`;
+                document.getElementById('well-npv').innerText = `$${(econ.metrics.npv / 1e6).toFixed(1)}M`;
+                document.getElementById('well-irr').innerText = `${econ.metrics.irr.toFixed(1)}%`;
+                document.getElementById('well-payback').innerText = `${econ.metrics.payback_months} Mo`;
+                
+                // Synthesis
+                document.getElementById('well-synthesis').innerText = data.synthesis;
+            } else {
+                outTitle.innerText = "Error running analysis";
+            }
+        })
+        .catch(err => {
+            outTitle.innerText = "Error connecting to GAIA neural core";
+            console.error(err);
+        });
+    }
+
+    function syncWithOracle() {
+        if (!window.currentPrediction) return;
+        
+        const data = window.currentPrediction;
+        const formation = data.formation;
+        const depth = data.discovery_prediction.location.depth || 3000;
+        
+        const pointer = document.getElementById('strat-laser-pointer');
+        const stratDepth = document.getElementById('strat-depth-val');
+        const stratLithology = document.getElementById('strat-lithology-val');
+        const basinHeader = document.getElementById('strat-basin-name');
+        
+        // Map depth to SVG scale (Y offset 0-320px)
+        let targetY = 30;
+        let lithology = "Consolidated Sands";
+        if (formation === 'Agbada') {
+            targetY = 135;
+            lithology = "Interbedded Sands & Shales";
+        } else if (formation === 'Akata') {
+            targetY = 240;
+            lithology = "Deep Marine Shales";
+        } else if (formation === 'Mamu' || formation === 'Coal Measures') {
+            targetY = 175;
+            lithology = "Siltstone & Coal Seams";
+        }
+        
+        if (pointer) pointer.style.transform = `translateY(${targetY}px)`;
+        if (stratDepth) stratDepth.innerText = `${depth.toFixed(0)} m`;
+        if (stratLithology) stratLithology.innerText = lithology;
+        if (basinHeader) basinHeader.innerText = formation;
+        
+        // Open Oracle drawer
+        const oracle = document.getElementById('oracle');
+        if (oracle && !oracle.classList.contains('open')) {
+            oracle.classList.add('open');
+        }
+        
+        // Inject a system prompt greeting in Oracle Chat
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+            chatBox.innerHTML += `<div class="msg msg-ai" style="border-left: 2px solid var(--neon-teal);"><i class="fas fa-sync-alt"></i> Synced 3D Coordinate prospect at <strong>${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)}</strong> into Oracle analysis stream. Active target formation set to <strong>${formation}</strong> at depth <strong>${depth.toFixed(0)}m</strong>.</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }
 </script>

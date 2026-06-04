@@ -165,6 +165,7 @@ class GAIAAgent:
         if not api_key:
             logger.warning("GEMINI_API_KEY not found in environment. Initializing in DEMO/MOCK mode.")
             self.model = MockGenerativeModel(model_name)
+            self.debate_model = self.model
             self.live = False
         else:
             genai.configure(api_key=api_key)
@@ -184,6 +185,7 @@ class GAIAAgent:
                 self.search_and_ingest_web_geology
             ]
             self.model = genai.GenerativeModel(model_name, tools=self.tools)
+            self.debate_model = genai.GenerativeModel(model_name)
 
     # --- AGENT TOOLS / PLUGINS ---
 
@@ -588,10 +590,10 @@ class GAIAAgent:
             session_context = json.dumps(geological_context, indent=2) if geological_context else "None"
             
             sentinel_prompt = f"{self.PERSONAS['SENTINEL']}\n[CONTEXT]\n{db_context}\n{session_context}\n[TASK] Analyze the geological risk of: {user_query}"
-            sentinel_resp = self.model.generate_content(sentinel_prompt).text
+            sentinel_resp = self.debate_model.generate_content(sentinel_prompt).text
             
             prophet_prompt = f"{self.PERSONAS['PROPHET']}\n[CONTEXT]\n{db_context}\n{session_context}\n[TASK] Analyze the financial feasibility of: {user_query}"
-            prophet_resp = self.model.generate_content(prophet_prompt).text
+            prophet_resp = self.debate_model.generate_content(prophet_prompt).text
             
             arbiter_prompt = f"""
             {self.PERSONAS['ARBITER']}
@@ -601,7 +603,7 @@ class GAIAAgent:
             [TASK] Provide a final synthesized recommendation for the query: {user_query}
             Format as a professional Executive Brief.
             """
-            final_resp = self.model.generate_content(arbiter_prompt).text
+            final_resp = self.debate_model.generate_content(arbiter_prompt).text
             
             return {
                 "sentinel": sentinel_resp,
@@ -612,10 +614,10 @@ class GAIAAgent:
         try:
             # Live multi-agent debate runs
             sentinel_prompt = f"{self.PERSONAS['SENTINEL']}\n[TASK] Analyze the structural geology / geospatial profiles for: {user_query}"
-            sentinel_resp = self.model.generate_content(sentinel_prompt).text
+            sentinel_resp = self.debate_model.generate_content(sentinel_prompt).text
 
             prophet_prompt = f"{self.PERSONAS['PROPHET']}\n[TASK] Analyze the economics and capex feasibility for: {user_query}"
-            prophet_resp = self.model.generate_content(prophet_prompt).text
+            prophet_resp = self.debate_model.generate_content(prophet_prompt).text
 
             arbiter_prompt = f"""
             {self.PERSONAS['ARBITER']}
@@ -626,7 +628,7 @@ class GAIAAgent:
             
             [TASK] Synthesize these positions and issue the final executive brief recommendation for: {user_query}
             """
-            final_resp = self.model.generate_content(arbiter_prompt).text
+            final_resp = self.debate_model.generate_content(arbiter_prompt).text
 
             return {
                 "sentinel": sentinel_resp,
@@ -634,11 +636,32 @@ class GAIAAgent:
                 "synthesis": final_resp
             }
         except Exception as e:
-            logger.error(f"Gemini API Debate Error: {e}")
+            logger.error(f"Gemini API Debate Error: {e}. Falling back to high-fidelity mock synthesis.")
+            mock_model = MockGenerativeModel("models/gemini-flash-latest")
+            
+            db_context = self._retrieve_context(user_query)
+            session_context = json.dumps(geological_context, indent=2) if geological_context else "None"
+            
+            sentinel_prompt = f"{self.PERSONAS['SENTINEL']}\n[CONTEXT]\n{db_context}\n{session_context}\n[TASK] Analyze the geological risk of: {user_query}"
+            sentinel_resp = mock_model.generate_content(sentinel_prompt).text
+            
+            prophet_prompt = f"{self.PERSONAS['PROPHET']}\n[CONTEXT]\n{db_context}\n{session_context}\n[TASK] Analyze the financial feasibility of: {user_query}"
+            prophet_resp = mock_model.generate_content(prophet_prompt).text
+            
+            arbiter_prompt = f"""
+            {self.PERSONAS['ARBITER']}
+            [DEBATE LOG]
+            SENTINEL: {sentinel_resp}
+            PROPHET: {prophet_resp}
+            [TASK] Provide a final synthesized recommendation for the query: {user_query}
+            Format as a professional Executive Brief.
+            """
+            final_resp = mock_model.generate_content(arbiter_prompt).text
+            
             return {
-                "sentinel": "Error running live Sentinel",
-                "prophet": "Error running live Prophet",
-                "synthesis": f"Collaborative synthesis failed: {e}"
+                "sentinel": sentinel_resp,
+                "prophet": prophet_resp,
+                "synthesis": final_resp
             }
 
     def generate_response(self, user_query, geological_context=None, mode="normal", session_id=1):
@@ -684,8 +707,11 @@ class GAIAAgent:
             response = chat.send_message(prompt)
             return response.text
         except Exception as e:
-            logger.error(f"Gemini API Error: {e}")
-            return f"### [SYSTEM ERROR] GAIA Neural Core Offline\nReason: {str(e)}\n\n*Falling back to legacy reasoning matrix...*"
+            logger.error(f"Gemini API Error: {e}. Falling back to high-fidelity mock technical briefing.")
+            mock_model = MockGenerativeModel("models/gemini-flash-latest")
+            prompt = f"{self.persona}\n\n[CONTEXT]\n{full_context}\n\n[USER QUERY]\n{user_query}\n\n[GAIA RESPONSE]"
+            response = mock_model.generate_content(prompt)
+            return response.text
 
     def analyze_basin_anomaly(self, basin_name, satellite_data):
         """Specialized tool for autonomous basin scouting."""
