@@ -27,19 +27,31 @@ from .models.satellite import SatelliteSpectralEngine
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    # DATABASE CONFIGURATION
-    # Priority: Environment Variable (Cloud Migration) > Default Local File
+    # DATABASE & STORAGE CONFIGURATION
+    # Priority: Environment Variable (Cloud Migration) > Volume Mount (/data) > Default Local File
     db_url = os.environ.get('DATABASE_URL')
-    if not db_url:
-        db_url = os.path.join(app.root_path, '..', 'well_analyses_v3.db')
-        logger_msg = f"Using Local SQLite: {db_url}"
-    else:
-        logger_msg = f"Connecting to Cloud Database: {db_url.split('@')[-1]}" # Mask credentials
+    volume_dir = "/data"
     
+    # Check if persistent volume is mounted at /data (standard Railway volume mount)
+    if os.path.exists(volume_dir) and os.path.isdir(volume_dir):
+        upload_dir = os.path.join(volume_dir, 'uploads')
+        if not db_url:
+            db_url = os.path.join(volume_dir, 'well_analyses_v3.db')
+            logger_msg = f"Using Volume SQLite: {db_url}"
+        else:
+            logger_msg = f"Using Configured DB with Volume Uploads: {db_url.split('@')[-1] if '@' in db_url else db_url}"
+    else:
+        upload_dir = os.path.join(app.root_path, '..', 'uploads')
+        if not db_url:
+            db_url = os.path.join(app.root_path, '..', 'well_analyses_v3.db')
+            logger_msg = f"Using Local SQLite: {db_url}"
+        else:
+            logger_msg = f"Connecting to Cloud Database: {db_url.split('@')[-1] if '@' in db_url else db_url}"
+            
     app.config.from_mapping(
         SECRET_KEY='petroleum-secret-key',
         DATABASE=db_url,
-        UPLOAD_FOLDER=os.path.join(app.root_path, '..', 'uploads'),
+        UPLOAD_FOLDER=upload_dir,
         SESSION_COOKIE_SAMESITE='Lax',
         SESSION_COOKIE_SECURE=False,
     )
