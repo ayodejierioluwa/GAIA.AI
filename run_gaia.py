@@ -53,9 +53,9 @@ if __name__ == '__main__':
                 print(f"⚠️ Background Growth Error: {e}")
                 time.sleep(60)
 
-    print("🧠 Starting GAIA Autonomous Growth Service...")
-    growth_thread = threading.Thread(target=start_autonomous_service, args=(app,), daemon=True)
-    growth_thread.start()
+    print("🧠 GAIA Autonomous Growth Service is registered [STANDBY — Offline for focus]")
+    # growth_thread = threading.Thread(target=start_autonomous_service, args=(app,), daemon=True)
+    # growth_thread.start()
 
     # Pre-train ML models
     ml_analyzer = app.config['ml_analyzer']

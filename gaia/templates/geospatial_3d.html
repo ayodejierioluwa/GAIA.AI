@@ -4,7 +4,7 @@
             <h1 style="font-family: 'Space Grotesk', sans-serif; color: var(--neon-blue); margin: 0;">🗺️ Geospatial 3D Studio</h1>
             <p style="color: var(--text-dim); letter-spacing: 1px;">{{ basin_title | upper }} • ARCHITECTURAL AUDIT</p>
         </div>
-        <button class="cyber-btn" onclick="location.href='/intelligence-suite'">BACK TO SUITE</button>
+        <button class="cyber-btn" onclick="location.href='/workshop/dashboard'">BACK TO SUITE</button>
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr 350px; gap: 20px;">
@@ -168,7 +168,7 @@
     function updateView() {
         const basin = document.getElementById('basin-selector').value;
         const sat = document.getElementById('sat-selector').value;
-        location.href = `/geospatial-3d?basin=${basin}&sat_mode=${sat}`;
+        location.href = `/workshop/geospatial?basin=${basin}&sat_mode=${sat}`;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -203,9 +203,10 @@
         const quickTakes = {{ quick_takes | safe }};
         
         plotEl.on('plotly_click', function(data){
+            if (!data || !data.points || data.points.length === 0) return;
             const point = data.points[0];
-            if(point.data.type === 'scatter3d') {
-                const title = point.text.split(':')[0];
+            if (point && point.data && point.data.type === 'scatter3d' && point.text) {
+                const title = point.text.split(':')[0].trim();
                 const take = quickTakes[title];
                 
                 if(take) {

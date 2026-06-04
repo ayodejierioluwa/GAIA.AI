@@ -132,9 +132,8 @@ def chat():
         if use_legacy:
             response = chatbot.generate_response(user_message)
         else:
-            # Context can be passed here for multi-modal reasoning in the future
             geological_context = data.get('context', {})
-            response = gaia_agent.generate_response(user_message, geological_context)
+            response = gaia_agent.generate_response(user_message, geological_context, session_id=session.get('user_id', 1))
             
         return json.dumps({'response': response})
     except Exception as e:

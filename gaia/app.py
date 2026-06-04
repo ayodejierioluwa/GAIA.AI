@@ -15,7 +15,7 @@ from .routes.intelligence import intelligence_bp
 from .routes.api import api_bp
 
 # Import models
-from .models.ml import NigeriaOilMLAnalyzer, AdvancedPreciseModel
+from .models.ml import EnhancedNigeriaOilMLAnalyzer, AdvancedPreciseModel, ReservoirDiscoveryModel, NigeriaOilExplorer
 from .models.geological import SubsurfaceGeologicalAnalyzer
 from .models.economics import EconomicFeasibilityEngine
 from .models.data_intelligence import AutonomousDataScraper, AutomatedDataAcquisition
@@ -24,7 +24,6 @@ from .models.agent import GAIAAgent
 from .models.tools import GeologicalAuditor, EconomicForecaster, NewsEngine
 from .models.ingestion_engine import IngestionEngine
 from .models.satellite import SatelliteSpectralEngine
-from .models.ml import NigeriaOilMLAnalyzer, AdvancedPreciseModel, ReservoirDiscoveryModel
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -54,20 +53,33 @@ def create_app(test_config=None):
 
     # Initialize components
     ai_db = DatabaseManager(app.config['DATABASE'])
-    ml_analyzer = NigeriaOilMLAnalyzer()
+    ml_analyzer = EnhancedNigeriaOilMLAnalyzer()
     precise_ml = AdvancedPreciseModel()
     geological_analyzer = SubsurfaceGeologicalAnalyzer()
     economics_engine = EconomicFeasibilityEngine()
     data_scraper = AutonomousDataScraper()
     data_acquisition = AutomatedDataAcquisition()
-    chatbot = PetroleumChatbot(db=ai_db)
-    gaia_agent = GAIAAgent(db_manager=ai_db)
-    ingestion_engine = IngestionEngine(db_manager=ai_db, gaia_agent=gaia_agent)
     geological_auditor = GeologicalAuditor(output_dir=app.config['UPLOAD_FOLDER'])
     economic_forecaster = EconomicForecaster()
     satellite_engine = SatelliteSpectralEngine()
     discovery_model = ReservoirDiscoveryModel(db=ai_db, sat_engine=satellite_engine)
     news_engine = NewsEngine()
+
+    explorer = NigeriaOilExplorer()
+    chatbot = PetroleumChatbot(
+        ml_analyzer=ml_analyzer,
+        explorer=explorer,
+        subsurface_analyzer=geological_analyzer,
+        db=ai_db
+    )
+    gaia_agent = GAIAAgent(
+        db_manager=ai_db,
+        ml_analyzer=ml_analyzer,
+        geological_analyzer=geological_analyzer,
+        economics_engine=economics_engine,
+        satellite_engine=satellite_engine
+    )
+    ingestion_engine = IngestionEngine(db_manager=ai_db, gaia_agent=gaia_agent)
 
     # Store in config for blueprints to access
     app.config['ai_db'] = ai_db
@@ -114,6 +126,45 @@ def create_app(test_config=None):
         response.headers['Access-Control-Allow-Origin'] = '*'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
         response.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS'
+
+        # Rewrite redirect location headers for single-domain compatibility
+        location = response.headers.get('Location')
+        if location and location.startswith('/') and not location.startswith('/apps/gaia/'):
+            response.headers['Location'] = '/apps/gaia' + location
+
+        # Rewrite HTML and JS response bodies to include the /apps/gaia prefix on absolute paths
+        content_type = response.headers.get('Content-Type', '')
+        if 'text/html' in content_type or 'application/javascript' in content_type:
+            try:
+                data = response.get_data(as_text=True)
+                # Absolute static, navigation, and API endpoints replacements
+                replacements = [
+                    ('href="/', 'href="/apps/gaia/'),
+                    ('src="/', 'src="/apps/gaia/'),
+                    ('action="/', 'action="/apps/gaia/'),
+                    ("window.location.href = '/", "window.location.href = '/apps/gaia/"),
+                    ('window.location.href = "/', 'window.location.href = "/apps/gaia/'),
+                    ("window.location.href='/", "window.location.href='/apps/gaia/"),
+                    ('window.location.href="/', 'window.location.href="/apps/gaia/'),
+                    ("location.href = '/", "location.href = '/apps/gaia/"),
+                    ('location.href = "/', 'location.href = "/apps/gaia/'),
+                    ("location.href='/", "location.href='/apps/gaia/"),
+                    ('location.href="/', 'location.href="/apps/gaia/'),
+                    ("location.href = `/", "location.href = `/apps/gaia/"),
+                    ("location.href=`/", "location.href=`/apps/gaia/"),
+                    ("fetch('/", "fetch('/apps/gaia/"),
+                    ('fetch("/', 'fetch("/apps/gaia/'),
+                    ("url: '/", "url: '/apps/gaia/"),
+                    ('url: "/', 'url: "/apps/gaia/'),
+                    ('"/api/', '"/apps/gaia/api/'),
+                    ("'/api/", "'/apps/gaia/api/"),
+                ]
+                for old, new in replacements:
+                    data = data.replace(old, new)
+                response.set_data(data)
+            except Exception as e:
+                print(f"Error rewriting HTML response paths: {e}")
+
         return response
 
     # START AUTONOMOUS PULSE (1 Hour Interval)

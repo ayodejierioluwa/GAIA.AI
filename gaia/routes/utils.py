@@ -31,33 +31,31 @@ TEMPLATE = r'''
             </div>
             <nav class="sidebar-nav">
                 {% if session.user_id %}
-                    <div class="nav-category">EXECUTIVE COMMAND</div>
-                    <a href="/mission-control" class="nav-item" id="nav-mission">
-                        <i class="fas fa-chess-king" style="color: #FFD700;"></i> <span>Mission Control</span>
-                    </a>
+                    <div class="nav-category">GAIA.AI SYSTEM</div>
                     <a href="/dashboard" class="nav-item" id="nav-dashboard">
-                        <i class="fas fa-th-large"></i> <span>System Dashboard</span>
+                        <i class="fas fa-brain" style="color: var(--neon-teal);"></i> <span>GAIA.AI Workspace</span>
                     </a>
                     
-                    <div class="nav-category">NEURAL INTELLIGENCE</div>
-                    <a href="/intelligence-dashboard" class="nav-item" id="nav-intelligence">
-                        <i class="fas fa-brain" style="color: var(--neon-blue);"></i> <span>Neural Thought Stream</span>
+                    <div class="nav-category">GAIA WORKSHOP (LAB)</div>
+                    <a href="/workshop/dashboard" class="nav-item" id="nav-intelligence">
+                        <i class="fas fa-sliders-h" style="color: var(--neon-blue);"></i> <span>Control Dashboard</span>
+                    </a>
+                    <a href="/workshop/satellite" class="nav-item" id="nav-satellite">
+                        <i class="fas fa-satellite"></i> <span>Satellite Command</span>
+                    </a>
+                    <a href="/workshop/geospatial" class="nav-item" id="nav-geospatial">
+                        <i class="fas fa-cubes"></i> <span>Geospatial Studio</span>
+                    </a>
+                    <a href="/workshop/mission-control" class="nav-item" id="nav-mission">
+                        <i class="fas fa-chess-king" style="color: #FFD700;"></i> <span>Mission Control</span>
+                    </a>
+
+                    <div class="nav-category">TECHNICAL SERVICES</div>
+                    <a href="/analysis-hub" class="nav-item" id="nav-analysis">
+                        <i class="fas fa-microscope"></i> <span>Analysis Hub</span>
                     </a>
                     <a href="/predictive-analytics" class="nav-item" id="nav-foresight">
                         <i class="fas fa-chart-area"></i> <span>Predictive Foresight</span>
-                    </a>
-
-                    <div class="nav-category">SPATIAL & ORBITAL</div>
-                    <a href="/satellite-analysis" class="nav-item" id="nav-satellite">
-                        <i class="fas fa-satellite"></i> <span>Satellite Command</span>
-                    </a>
-                    <a href="/geospatial-3d" class="nav-item" id="nav-geospatial">
-                        <i class="fas fa-cubes"></i> <span>Geospatial Studio</span>
-                    </a>
-
-                    <div class="nav-category">TECHNICAL LAB</div>
-                    <a href="/analysis-hub" class="nav-item" id="nav-analysis">
-                        <i class="fas fa-microscope"></i> <span>Analysis Hub</span>
                     </a>
 
                     <a href="#" class="nav-item oracle-trigger" onclick="toggleOracle(event)" style="border-top: 1px solid var(--glass-border); margin-top: 20px;">
@@ -442,8 +440,8 @@ TEMPLATE = r'''
                         <div style="font-size: 0.85rem; line-height: 1.4;">${data.response}</div>
                     </div>
                     <div style="padding: 10px; font-size: 0.7rem; color: var(--text-dim);">Navigate to:</div>
-                    <div class="nav-item" onclick="location.href='/intelligence-dashboard'" style="padding: 10px; cursor: pointer;"><i class="fas fa-brain"></i> Neural Thought Stream</div>
-                    <div class="nav-item" onclick="location.href='/geospatial-3d'" style="padding: 10px; cursor: pointer;"><i class="fas fa-cubes"></i> Geospatial Studio</div>
+                    <div class="nav-item" onclick="location.href='/workshop/dashboard'" style="padding: 10px; cursor: pointer;"><i class="fas fa-brain"></i> Neural Thought Stream</div>
+                    <div class="nav-item" onclick="location.href='/workshop/geospatial'" style="padding: 10px; cursor: pointer;"><i class="fas fa-cubes"></i> Geospatial Studio</div>
                 `;
             });
         });

@@ -72,7 +72,7 @@ class DatabaseManager:
             conn.execute(text("CREATE TABLE IF NOT EXISTS learning_logs (id SERIAL PRIMARY KEY, event_type TEXT, description TEXT, accuracy_improvement REAL, timestamp TEXT)"))
 
     def create_user(self, username, email, password):
-        password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+        password_hash = generate_password_hash(password)
         try:
             if self.use_sqlalchemy:
                 with self.engine.begin() as conn:
@@ -86,7 +86,11 @@ class DatabaseManager:
                 uid = cursor.lastrowid
                 conn.close()
                 return uid
-        except Exception: return None
+        except Exception as e:
+            print("!!! GAIA DATABASE ERROR IN CREATE_USER:", e, flush=True)
+            import traceback
+            traceback.print_exc()
+            return None
 
     def verify_user(self, username, password):
         try:

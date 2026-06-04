@@ -18,7 +18,13 @@ class WellDataParser:
         'api_gravity': ['api', 'gravity', 'density_api'],
         'gor': ['gor', 'gas oil ratio', 'gasoil'],
         'water_cut': ['wct', 'water cut', 'wc', 'water_percent'],
-        'temperature': ['temp', 'temperature', 'bottom hole temp', 'bht']
+        'temperature': ['temp', 'temperature', 'bottom hole temp', 'bht'],
+        'latitude': ['latitude', 'lat'],
+        'longitude': ['longitude', 'lon', 'long'],
+        'formation': ['formation', 'fm', 'lithology'],
+        'oil_presence': ['oil_presence', 'oil', 'hydrocarbon'],
+        'porosity': ['porosity', 'por', 'phi'],
+        'permeability': ['permeability', 'perm', 'k', 'md']
     }
 
     @classmethod
@@ -28,7 +34,8 @@ class WellDataParser:
             'well_name': filename.split('.')[0],
             'flow_rate': 0, 'initial_pressure': 0, 'final_pressure': 0,
             'depth': 0, 'api_gravity': 32.0, 'gor': 500, 'water_cut': 0, 'temperature': 180,
-            'porosity': 0.22, 'permeability': 150
+            'porosity': 0.22, 'permeability': 150,
+            'latitude': None, 'longitude': None, 'formation': None, 'oil_presence': None
         }
         
         try:
@@ -46,12 +53,24 @@ class WellDataParser:
                 for target, synonyms in cls.COL_MAPPING.items():
                     for col in row.keys():
                         if any(syn in col.lower() for syn in synonyms):
-                            try:
-                                val = float(str(row[col]).replace(',', ''))
-                                data[target] = val
+                            val_str = str(row[col]).strip()
+                            if target in ['formation', 'well_name']:
+                                data[target] = val_str
                                 break
-                            except (ValueError, TypeError):
-                                continue
+                            else:
+                                try:
+                                    if target == 'oil_presence':
+                                        if val_str.lower() in ['true', 'yes', 'y', '1']:
+                                            data[target] = True
+                                        elif val_str.lower() in ['false', 'no', 'n', '0']:
+                                            data[target] = False
+                                        else:
+                                            data[target] = float(val_str.replace(',', '')) > 0
+                                    else:
+                                        data[target] = float(val_str.replace(',', ''))
+                                    break
+                                except (ValueError, TypeError):
+                                    continue
             
             # Automatic fallback for common well naming
             if not data.get('well_name') or data['well_name'] == 'Well-New':

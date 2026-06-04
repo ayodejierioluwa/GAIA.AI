@@ -38,7 +38,7 @@ def ai_training():
     # Redirect to the new upgraded dashboard
     return redirect(url_for('intelligence.intelligence_dashboard'))
 
-@intelligence_bp.route('/intelligence-dashboard')
+@intelligence_bp.route('/workshop/dashboard')
 def intelligence_dashboard():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
@@ -110,7 +110,7 @@ def api_reason():
             layers = analyzer.generate_geological_layers(7.1, 7.2)
             context = {'layers': layers}
         
-    response = gaia_agent.generate_response(query, geological_context=context)
+    response = gaia_agent.generate_response(query, geological_context=context, session_id=session.get('user_id', 1))
     
     return json.dumps({
         'status': 'success',
@@ -170,7 +170,7 @@ def growth_status():
 import os
 import asyncio
 
-@intelligence_bp.route('/satellite-analysis')
+@intelligence_bp.route('/workshop/satellite')
 def satellite_analysis():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
@@ -260,7 +260,7 @@ def data_integration():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     return render_gaia_page("Data Integration", "<p>External data connectivity hub...</p>")
-@intelligence_bp.route('/geospatial-3d')
+@intelligence_bp.route('/workshop/geospatial')
 def geospatial_3d():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
@@ -401,7 +401,7 @@ def api_news():
         'status': 'success',
         'headlines': headlines
     })
-@intelligence_bp.route('/mission-control')
+@intelligence_bp.route('/workshop/mission-control')
 def mission_control():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))

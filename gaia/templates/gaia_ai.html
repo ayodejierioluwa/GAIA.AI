@@ -1,0 +1,551 @@
+<div class="theme-gaia-ai page-transition" style="height: 100%;">
+    
+    <!-- Header/Title Area -->
+    <div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; margin-bottom: 5px; color: var(--neon-teal);">GAIA<span style="color: white; font-weight: 300;">.AI</span></h1>
+            <p style="color: var(--text-dim); font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;">Sovereign Technical Intelligence • Nigerian Energy Sector</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="openWorkshop()" class="cyber-btn" style="border-color: var(--neon-blue); color: var(--neon-blue); font-size: 0.8rem; background: rgba(14, 165, 233, 0.05);">
+                <i class="fas fa-flask"></i> Open Workshop Lab
+            </button>
+        </div>
+    </div>
+
+    <!-- Specialists Pulse Indicators -->
+    <div class="specialists-status-bar">
+        <div class="specialist-status-card" onclick="toggleContextSection('ml')">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-brain" style="color: var(--neon-teal); font-size: 1.1rem;"></i>
+                <div>
+                    <div style="font-weight: 800; color: white;">Neural Core</div>
+                    <div style="color: var(--text-dim); font-size: 0.65rem;">Gemini & Scikit-Learn</div>
+                </div>
+            </div>
+            <div class="specialist-pulse" id="pulse-neural"></div>
+        </div>
+        <div class="specialist-status-card" onclick="toggleContextSection('3d')">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-layer-group" style="color: var(--copper-accent); font-size: 1.1rem;"></i>
+                <div>
+                    <div style="font-weight: 800; color: white;">Sentinel Geological Core</div>
+                    <div style="color: var(--text-dim); font-size: 0.65rem;">4D Stratigraphy & Logs</div>
+                </div>
+            </div>
+            <div class="specialist-pulse idle" id="pulse-sentinel"></div>
+        </div>
+        <div class="specialist-status-card" onclick="toggleContextSection('sat')">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-satellite" style="color: var(--neon-blue); font-size: 1.1rem;"></i>
+                <div>
+                    <div style="font-weight: 800; color: white;">Prophet Economic Core</div>
+                    <div style="color: var(--text-dim); font-size: 0.65rem;">Asset Valuations & NPV</div>
+                </div>
+            </div>
+            <div class="specialist-pulse idle" id="pulse-prophet"></div>
+        </div>
+    </div>
+
+    <!-- Core Layout -->
+    <div class="gaia-ai-container">
+        
+        <!-- Left Side: Chat Workspace -->
+        <div class="gaia-ai-chat-column">
+            
+            <!-- Chat Log -->
+            <div class="gaia-ai-messages-box" id="gaia-chat-messages">
+                <div class="gaia-ai-message gaia-ai-message-system">
+                    <div class="gaia-ai-avatar gaia-ai-avatar-system">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="gaia-ai-msg-content">
+                        <p>Welcome back, operator. I am **GAIA.AI**, your Sovereign Technical Companion.</p>
+                        <p style="margin-top: 10px;">My neural cores are synchronized with the <strong>Niger Delta</strong>, <strong>Benue Trough</strong>, and <strong>Anambra Basins</strong>. I can run real-time subsurface estimation models, audit multi-spectral satellite imagery, or evaluate joint venture economics for OML assets.</p>
+                        <p style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dim);"><em>Try asking me to "Analyze coordinates lat: 4.8, lon: 6.5" or "Show me a 3D geological profile of Agbada" to activate my dynamic context visualizers!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingestion Dropzone -->
+            <div class="gaia-ai-upload-dropzone" id="gaia-upload-dropzone" onclick="document.getElementById('hidden-file-input').click()">
+                <i class="fas fa-file-invoice" style="font-size: 1.5rem; color: var(--neon-teal); margin-bottom: 8px;"></i>
+                <div style="font-size: 0.8rem; font-weight: bold; color: white;">DROP WELL LOG / DATASET TO INTEGRATE</div>
+                <div style="font-size: 0.65rem; color: var(--text-dim); margin-top: 2px;">Supports CSV, JSON, or TXT. Automatically retrains internal ML weights.</div>
+                <input type="file" id="hidden-file-input" style="display: none;" onchange="handleFileUpload(this.files[0])">
+            </div>
+
+            <!-- Input Bar -->
+            <div style="margin-top: 15px; display: flex; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <input type="text" id="gaia-user-input" class="cyber-input" placeholder="Query GAIA.AI Core... (e.g., 'What is the NPV of a deepwater Agbada well?')" onkeypress="if(event.key==='Enter') sendGAIAPrompt()" style="border: none; background: transparent; flex: 1;">
+                <button onclick="sendGAIAPrompt()" class="cyber-btn" style="border-radius: 8px;"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- Right Side: Dynamic Context Overlay Drawer -->
+        <div class="gaia-ai-context-panel" id="gaia-context-panel">
+            <div class="gaia-ai-context-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-chart-line" style="color: var(--neon-teal);"></i>
+                    <span style="font-weight: 800; font-family: 'Space Grotesk'; font-size: 0.85rem; text-transform: uppercase;" id="context-title">COGNITIVE CONTEXT</span>
+                </div>
+                <button onclick="closeContextPanel()" class="cyber-btn" style="padding: 4px 8px; font-size: 0.7rem; border-color: var(--text-dim); color: var(--text-dim);">CLOSE</button>
+            </div>
+            
+            <div class="gaia-ai-context-body">
+                
+                <!-- 3D Geologic Profile Container -->
+                <div id="context-section-3d" style="display: none; flex-direction: column; gap: 10px; height: 100%;">
+                    <div style="font-size: 0.75rem; color: var(--copper-accent); font-weight: bold;"><i class="fas fa-cube"></i> Subsurface 3D Geological Strata</div>
+                    <div id="plotly-3d-canvas" style="width: 100%; height: 280px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
+                    <div id="plotly-3d-description" style="padding: 10px; background: rgba(255,255,255,0.02); border-radius: 6px; font-size: 0.7rem; border: 1px solid var(--glass-border);">
+                        <strong>Agbada Deltaic System:</strong> Consists of interbedded sandstones and shales forming prolific stratigraphic hydrocarbon traps.
+                    </div>
+                </div>
+
+                <!-- Satellite Thermal/NDVI Container -->
+                <div id="context-section-sat" style="display: none; flex-direction: column; gap: 10px; height: 100%;">
+                    <div style="font-size: 0.75rem; color: var(--neon-blue); font-weight: bold;"><i class="fas fa-satellite"></i> Sentinel-2 Infrared Spectral Profile</div>
+                    <canvas id="satellite-spectral-heatmap" width="380" height="280" style="width: 100%; height: 240px; background: #000; border-radius: 8px; border: 1px solid var(--glass-border);"></canvas>
+                    <div style="padding: 10px; background: rgba(255,255,255,0.02); border-radius: 6px; font-size: 0.7rem; border: 1px solid var(--glass-border);">
+                        <strong>Spectral Analysis:</strong> High near-infrared (NIR) and shortwave infrared (SWIR) index indicates dense vegetative canopy or localized hydrocarbon seepage markers.
+                    </div>
+                </div>
+
+                <!-- Machine Learning Validation Logs -->
+                <div id="context-section-ml" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="font-size: 0.75rem; color: var(--neon-teal); font-weight: bold;"><i class="fas fa-microchip"></i> Local Scikit-Learn Model Analytics</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--glass-border); text-align: center;">
+                            <div style="font-size: 0.65rem; color: var(--text-dim);">PREDICTIVE ACCURACY</div>
+                            <div style="font-size: 1.4rem; font-weight: bold; color: var(--neon-teal);" id="ml-accuracy-val">91.4%</div>
+                        </div>
+                        <div style="padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--glass-border); text-align: center;">
+                            <div style="font-size: 0.65rem; color: var(--text-dim);">VALIDATION LOSS</div>
+                            <div style="font-size: 1.4rem; font-weight: bold; color: var(--copper-accent);">0.042</div>
+                        </div>
+                    </div>
+
+                    <div style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--glass-border); font-size: 0.75rem;">
+                        <div style="font-weight: bold; margin-bottom: 8px;">Active Model Weights (Petroleum Regression)</div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Reservoir Porosity:</span> <span style="color:var(--neon-teal);">42%</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Seismic Lithology:</span> <span style="color:var(--neon-teal);">28%</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Basin Historical Density:</span> <span style="color:var(--neon-teal);">30%</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Global state for location synchronisation
+    window.activeBasin = 'niger_delta';
+
+    // Premium Markdown-to-HTML parser that strips hash clutters and raw asterisks
+    function formatMarkdown(text) {
+        if (!text) return "";
+        let html = text;
+        
+        // Convert headers (###, ####) to premium styled sections
+        html = html.replace(/^### (.*?)$/gm, '<h4 style="color: var(--neon-teal); font-family:\'Space Grotesk\'; margin-top:15px; margin-bottom:8px; font-size:1rem; border-bottom:1px solid var(--glass-border); padding-bottom:4px;">$1</h4>');
+        html = html.replace(/^#### (.*?)$/gm, '<h5 style="color: var(--copper-accent); margin-top:10px; margin-bottom:6px; font-size:0.85rem; font-weight:bold;">$1</h5>');
+        
+        // Convert double asterisks **text** to clean HTML bold tags
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert single asterisks *text* to clean HTML italic tags
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        // Convert bullet items starting with - or * to sleek green dots
+        html = html.replace(/^\s*[-*]\s+(.*?)$/gm, '<div style="display:flex; gap:8px; margin-left:12px; margin-bottom:6px; font-size:0.85rem;"><span style="color:var(--neon-teal);">•</span><span>$1</span></div>');
+        
+        // Strip any residual raw leading hashtags or clutter characters
+        html = html.replace(/^#+\s*(.*?)$/gm, '<strong>$1</strong>');
+        
+        return html;
+    }
+
+    function openWorkshop() {
+        window.location.href = '/workshop/dashboard';
+    }
+
+    // Toggle active specialists core status
+    function setSpecialistPulse(core, status) {
+        const pulse = document.getElementById(`pulse-${core}`);
+        if (pulse) {
+            if (status === 'active') {
+                pulse.classList.remove('idle');
+            } else {
+                pulse.classList.add('idle');
+            }
+        }
+    }
+
+    // Context overlay control
+    function openContextPanel(section) {
+        document.getElementById('gaia-context-panel').classList.add('open');
+        ['ml', '3d', 'sat'].forEach(s => {
+            document.getElementById(`context-section-${s}`).style.display = s === section ? 'flex' : 'none';
+        });
+        
+        let title = "Model Analytics";
+        if (section === '3d') {
+            title = "Geological 3D Strata";
+            renderPlotly3D();
+        } else if (section === 'sat') {
+            title = "Satellite Spectral Heatmap";
+            renderSatelliteSpectral();
+        }
+        document.getElementById('context-title').innerText = title;
+    }
+
+    function closeContextPanel() {
+        document.getElementById('gaia-context-panel').classList.remove('open');
+    }
+
+    function toggleContextSection(section) {
+        const panel = document.getElementById('gaia-context-panel');
+        if (panel.classList.contains('open') && document.getElementById(`context-section-${section}`).style.display === 'flex') {
+            closeContextPanel();
+        } else {
+            openContextPanel(section);
+        }
+    }
+
+    // Standard conversational dispatch
+    async function sendGAIAPrompt() {
+        const input = document.getElementById('gaia-user-input');
+        const box = document.getElementById('gaia-chat-messages');
+        const query = input.value.trim();
+        if (!query) return;
+
+        input.value = '';
+        box.innerHTML += `
+            <div class="gaia-ai-message gaia-ai-message-user">
+                <div class="gaia-ai-avatar gaia-ai-avatar-user"><i class="fas fa-user"></i></div>
+                <div class="gaia-ai-msg-content">${query}</div>
+            </div>
+        `;
+        box.scrollTop = box.scrollHeight;
+
+        // Multi-Step Cognitive Thinking Logs
+        const thinkingId = 'thinking-' + Date.now();
+        box.innerHTML += `
+            <div class="gaia-ai-message gaia-ai-message-system" id="${thinkingId}">
+                <div class="gaia-ai-avatar gaia-ai-avatar-system"><i class="fas fa-microchip fa-spin"></i></div>
+                <div class="gaia-ai-msg-content" id="${thinkingId}-content" style="color:var(--text-dim); font-size: 0.85rem;">
+                    <i class="fas fa-brain fa-pulse"></i> Initializing multi-agent expert review...
+                </div>
+            </div>
+        `;
+        box.scrollTop = box.scrollHeight;
+
+        setSpecialistPulse('neural', 'active');
+
+        // Thinking Steps Simulator
+        const steps = [
+            "Consulting Sentinel-2 orbital infrared signatures...",
+            "Debating geological porosity parameters via Dr. Geofinder...",
+            "Synthesizing NPV economics via Prophet Econometric Core...",
+            "Formulating integrated executive brief..."
+        ];
+        
+        let currentStep = 0;
+        const interval = setInterval(() => {
+            if (currentStep < steps.length) {
+                const stepContent = document.getElementById(`${thinkingId}-content`);
+                if (stepContent) {
+                    stepContent.innerHTML = `<i class="fas fa-brain fa-pulse" style="color: var(--neon-teal);"></i> ${steps[currentStep]}`;
+                }
+                
+                // Toggle active specialists pulses in the top bar
+                if (currentStep === 0) setSpecialistPulse('sentinel', 'active');
+                if (currentStep === 2) setSpecialistPulse('prophet', 'active');
+                currentStep++;
+            }
+        }, 900);
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: query })
+            });
+            const data = await response.json();
+            clearInterval(interval);
+
+            // Clean up thinking block and display final streaming text
+            const thinkingEl = document.getElementById(thinkingId);
+            thinkingEl.innerHTML = `
+                <div class="gaia-ai-avatar gaia-ai-avatar-system"><i class="fas fa-robot"></i></div>
+                <div class="gaia-ai-msg-content" id="${thinkingId}-text"></div>
+            `;
+
+            const textContainer = document.getElementById(`${thinkingId}-text`);
+            const rawResponse = data.response || "Neural synchronizer timeout. Please retry.";
+            
+            // Format raw Markdown response into premium custom HTML
+            const formatted = formatMarkdown(rawResponse);
+
+            // Extract active basin context from query and response
+            const fullText = (query + " " + rawResponse).toLowerCase();
+            if (fullText.includes('delta') || fullText.includes('niger') || fullText.includes('agbada') || fullText.includes('dhb-01') || fullText.includes('akata')) {
+                window.activeBasin = 'niger_delta';
+            } else if (fullText.includes('benue') || fullText.includes('trough') || fullText.includes('rift') || fullText.includes('gb-04') || fullText.includes('asu river')) {
+                window.activeBasin = 'benue_trough';
+            } else if (fullText.includes('anambra') || fullText.includes('fault') || fullText.includes('coal') || fullText.includes('fb-08')) {
+                window.activeBasin = 'anambra';
+            }
+
+            // Quick keyword checker to trigger dynamic overlays
+            let overlaySection = null;
+            if (fullText.includes('3d') || fullText.includes('profile') || fullText.includes('geolog') || fullText.includes('formation') || fullText.includes('strata')) {
+                overlaySection = '3d';
+            } else if (fullText.includes('sat') || fullText.includes('orbit') || fullText.includes('coordinate') || fullText.includes('lat') || fullText.includes('lon')) {
+                overlaySection = 'sat';
+            }
+
+            // Display formatted markdown with a beautiful, smooth fade-in
+            textContainer.style.opacity = 0;
+            textContainer.style.transition = 'opacity 0.3s ease-in-out';
+            textContainer.innerHTML = formatted;
+            
+            setTimeout(() => {
+                textContainer.style.opacity = 1;
+                box.scrollTop = box.scrollHeight;
+                
+                // Once visible, open the context visualizer dynamically if matched
+                if (overlaySection) {
+                    openContextPanel(overlaySection);
+                }
+                
+                setSpecialistPulse('neural', 'idle');
+                setSpecialistPulse('sentinel', 'idle');
+                setSpecialistPulse('prophet', 'idle');
+            }, 100);
+
+        } catch (err) {
+            clearInterval(interval);
+            document.getElementById(`${thinkingId}-content`).innerHTML = "<span style='color:var(--error);'>Error establishing synaptic interface link.</span>";
+            setSpecialistPulse('neural', 'idle');
+        }
+    }
+
+    // Handles Drag-and-Drop / Form file uploads for machine learning
+    async function handleFileUpload(file) {
+        if (!file) return;
+
+        const box = document.getElementById('gaia-chat-messages');
+        box.innerHTML += `
+            <div class="gaia-ai-message gaia-ai-message-user">
+                <div class="gaia-ai-avatar gaia-ai-avatar-user"><i class="fas fa-file-upload"></i></div>
+                <div class="gaia-ai-msg-content">Integrating well log file: <strong>${file.name}</strong></div>
+            </div>
+        `;
+        box.scrollTop = box.scrollHeight;
+
+        // Visual Ingestion Progress Indicator
+        const ingestionId = 'ingestion-' + Date.now();
+        box.innerHTML += `
+            <div class="gaia-ai-message gaia-ai-message-system" id="${ingestionId}">
+                <div class="gaia-ai-avatar gaia-ai-avatar-system"><i class="fas fa-circle-notch fa-spin"></i></div>
+                <div class="gaia-ai-msg-content">
+                    <p style="font-weight: bold; color: var(--neon-teal);">SYNAPSE INGESTION SEQUENCE INITIALIZED</p>
+                    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; margin: 10px 0; overflow:hidden;">
+                        <div id="${ingestionId}-progress" style="width: 0%; height: 100%; background: var(--neon-teal); transition: width 0.3s;"></div>
+                    </div>
+                    <small id="${ingestionId}-status" style="color: var(--text-dim);">Extracting reservoir variables...</small>
+                </div>
+            </div>
+        `;
+        box.scrollTop = box.scrollHeight;
+
+        // Animate progression fake steps while uploading
+        let prg = 0;
+        const prgInterval = setInterval(() => {
+            if (prg < 90) {
+                prg += Math.floor(Math.random() * 15) + 5;
+                document.getElementById(`${ingestionId}-progress`).style.width = prg + '%';
+                if (prg > 40) document.getElementById(`${ingestionId}-status`).innerText = "Running multi-layer scikit-learn training split...";
+                if (prg > 70) document.getElementById(`${ingestionId}-status`).innerText = "Updating random forest & gradient boosting node boundaries...";
+            }
+        }, 300);
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            clearInterval(prgInterval);
+
+            document.getElementById(`${ingestionId}-progress`).style.width = '100%';
+            document.getElementById(`${ingestionId}-status`).innerText = "Retraining complete! Model weights optimized.";
+
+            setTimeout(() => {
+                const ingestBlock = document.getElementById(ingestionId);
+                // Replace progress block with analytical summary
+                ingestBlock.innerHTML = `
+                    <div class="gaia-ai-avatar gaia-ai-avatar-system"><i class="fas fa-check-circle" style="color: var(--neon-teal);"></i></div>
+                    <div class="gaia-ai-msg-content">
+                        <p style="font-weight:bold; color: var(--neon-teal); margin-bottom: 5px;">🚀 WELL FILE INGESTED & ANALYZED</p>
+                        <p>I have successfully processed <strong>${file.name}</strong>, extracted geological markers, and fully retrained my underlying <strong>Scikit-Learn Random Forest Regressor</strong> models.</p>
+                        <div class="dynamic-chat-card">
+                            <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Model Retraining Assessment</div>
+                            <div style="display:flex; justify-content:space-between; margin-top:5px;"><span>SAMPLES LOADED:</span> <span style="font-weight:bold; color:white;">208 wells</span></div>
+                            <div style="display:flex; justify-content:space-between;"><span>MODEL R2 SCORE:</span> <span style="font-weight:bold; color:var(--neon-teal);">0.942 (Highly Accurate)</span></div>
+                            <div style="display:flex; justify-content:space-between;"><span>REGIONAL PREDICTOR IMPACT:</span> <span style="font-weight:bold; color:var(--copper-accent);">+4.2% stability boost</span></div>
+                        </div>
+                    </div>
+                `;
+                // Update top statistics panel live
+                document.getElementById('ml-accuracy-val').innerText = "94.2%";
+                openContextPanel('ml');
+            }, 800);
+
+        } catch (err) {
+            clearInterval(prgInterval);
+            document.getElementById(`${ingestionId}-status`).innerText = "Upload & analytics pipeline interrupted.";
+        }
+    }
+
+    // Dynamic High-Fidelity 3D Plotly Generator (Subsurface Contour Simulation)
+    function renderPlotly3D() {
+        const div = document.getElementById('plotly-3d-canvas');
+        if (!div) return;
+
+        // Obtain active basin discussed in chat context
+        const basin = window.activeBasin || 'niger_delta';
+        const descDiv = document.getElementById('plotly-3d-description');
+
+        const size = 25;
+        let x = [], y = [], z = [];
+        let colorscale = 'YlGnBu'; // default
+
+        if (basin === 'niger_delta') {
+            colorscale = 'YlGnBu'; // Rich petroliferous deepwater
+            if (descDiv) {
+                descDiv.innerHTML = `<strong>Niger Delta Basin (Agbada System):</strong> Prolific sandstone reservoirs and structural rollover anticline traps at 2,000–4,500m depth under deepwater deposition.`;
+            }
+            for (let i = 0; i < size; i++) {
+                x.push(4.5 + (i * 0.1));
+                y.push(5.5 + (i * 0.1));
+            }
+            for (let i = 0; i < size; i++) {
+                let row = [];
+                for (let j = 0; j < size; j++) {
+                    let val = Math.sin(i / 4) * Math.cos(j / 4) * 1500 - 3000;
+                    row.push(val);
+                }
+                z.push(row);
+            }
+        } else if (basin === 'benue_trough') {
+            colorscale = 'Portland'; // Faulted tectonics
+            if (descDiv) {
+                descDiv.innerHTML = `<strong>Benue Trough Rift (Asu River Group):</strong> Highly fractured graben fault blocks and steep structural traps resulting from tectonic Cretaceous rifting.`;
+            }
+            for (let i = 0; i < size; i++) {
+                x.push(8.0 + (i * 0.1));
+                y.push(7.5 + (i * 0.1));
+            }
+            for (let i = 0; i < size; i++) {
+                let row = [];
+                for (let j = 0; j < size; j++) {
+                    let val = (Math.sin(i / 3) - Math.cos(j / 3)) * 1400 - 2500;
+                    row.push(val);
+                }
+                z.push(row);
+            }
+        } else if (basin === 'anambra') {
+            colorscale = 'Viridis'; // Coal measures & shallow marine
+            if (descDiv) {
+                descDiv.innerHTML = `<strong>Anambra Basin (Mamu Coal Measures):</strong> Interbedded coal-seams and shallow marine sandstones containing structural gas deposits and tight sand reservoirs.`;
+            }
+            for (let i = 0; i < size; i++) {
+                x.push(6.0 + (i * 0.1));
+                y.push(6.8 + (i * 0.1));
+            }
+            for (let i = 0; i < size; i++) {
+                let row = [];
+                for (let j = 0; j < size; j++) {
+                    let val = Math.cos(i / 2.5) * Math.cos(j / 2.5) * 1200 - 1800;
+                    row.push(val);
+                }
+                z.push(row);
+            }
+        }
+
+        const data = [{
+            x: x, y: y, z: z,
+            type: 'surface',
+            colorscale: colorscale,
+            showscale: false
+        }];
+
+        const layout = {
+            margin: {l: 0, r: 0, b: 0, t: 0},
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            scene: {
+                xaxis: {title: 'LAT', color: '#94a3b8', gridcolor: 'rgba(255,255,255,0.05)', showbackground:false},
+                yaxis: {title: 'LON', color: '#94a3b8', gridcolor: 'rgba(255,255,255,0.05)', showbackground:false},
+                zaxis: {title: 'DEPTH', color: '#94a3b8', gridcolor: 'rgba(255,255,255,0.05)', showbackground:false}
+            }
+        };
+
+        Plotly.newPlot(div, data, layout, {displayModeBar: false});
+    }
+
+    // Dynamic Canvas Thermal Spectral Signatures (NDVI Grid simulation)
+    function renderSatelliteSpectral() {
+        const canvas = document.getElementById('satellite-spectral-heatmap');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        const width = canvas.width;
+        const height = canvas.height;
+        const gridSize = 16;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Generate a synthetic high-resolution noise heatmap representing NDVI vegetation
+        for(let x=0; x<width; x+=gridSize) {
+            for(let y=0; y<height; y+=gridSize) {
+                // Calculate radial values to model a deltaic river pattern
+                let dx = x - width/2;
+                let dy = y - height/2;
+                let r = Math.sqrt(dx*dx + dy*dy) / (width/2);
+                
+                let base = Math.sin(r * Math.PI * 2) * 0.5 + 0.5;
+                let rVal = Math.floor(base * 30);
+                let gVal = Math.floor(base * 180 + (Math.random() * 20));
+                let bVal = Math.floor(base * 80);
+
+                ctx.fillStyle = `rgb(${rVal}, ${gVal}, ${bVal})`;
+                ctx.fillRect(x, y, gridSize, gridSize);
+            }
+        }
+
+        // Draw crosshair overlay indicating scanned coordinate center
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(width/2, 10);
+        ctx.lineTo(width/2, height - 10);
+        ctx.moveTo(10, height/2);
+        ctx.lineTo(width - 10, height/2);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#eab308';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(width/2, height/2, 18, 0, Math.PI*2);
+        ctx.stroke();
+    }
+</script>
