@@ -257,11 +257,11 @@ def upload():
     content = '''
     <div class="glass-panel page-transition" style="max-width: 600px; margin: 40px auto; text-align: center;">
         <h3 style="color: var(--neon-teal); margin-bottom: 10px;">📤 Portal: Data Ingestion</h3>
-        <p style="color: var(--text-dim); margin-bottom: 30px;">Accepts CSV, TXT, PDF, or DOCX formats.</p>
+        <p style="color: var(--text-dim); margin-bottom: 30px;">Accepts CSV, TXT, LAS, PDF, or DOCX formats.</p>
         
         <form method="post" enctype="multipart/form-data">
             <div style="margin: 20px 0; padding: 50px; border: 2px dashed rgba(0, 255, 195, 0.2); border-radius: 12px; background: rgba(0,0,0,0.2);">
-                <input type="file" name="file" accept=".csv,.txt,.pdf,.docx" style="color: var(--text-dim);" required>
+                <input type="file" name="file" accept=".csv,.txt,.las,.pdf,.docx" style="color: var(--text-dim);" required>
             </div>
             <button type="submit" class="cyber-btn" style="width: 100%; padding: 15px;">Analyze & Ingest</button>
         </form>
