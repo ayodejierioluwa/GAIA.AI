@@ -358,6 +358,21 @@ def data_integration():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     return render_gaia_page("Data Integration", "<p>External data connectivity hub...</p>")
+@intelligence_bp.route('/workshop/mineral-map')
+def mineral_map():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    template_path = os.path.join(current_app.root_path, 'templates', 'mineral_map.html')
+    with open(template_path, 'r') as f:
+        template_content = f.read()
+        
+    from .utils import render_gaia_page
+    from flask import render_template_string
+    
+    content = render_template_string(template_content)
+    return render_gaia_page("Mineral Resources Map", content)
+
 @intelligence_bp.route('/workshop/geospatial')
 def geospatial_3d():
     if 'user_id' not in session:

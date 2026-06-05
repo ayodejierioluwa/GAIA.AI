@@ -1,0 +1,342 @@
+<div class="page-transition">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 0;">MINERAL <span style="color: var(--neon-blue);">RESOURCES</span></h1>
+            <p style="color: var(--text-dim); letter-spacing: 2px; font-size: 0.8rem;">NIGERIAN STATE-BY-STATE STRATEGIC RESERVES MAP</p>
+        </div>
+        <div class="glass-panel" style="padding: 10px 20px; display: flex; gap: 20px; font-family: 'Roboto Mono'; font-size: 0.7rem;">
+            <div><span style="color: var(--text-dim);">REGION:</span> <span style="color: var(--neon-teal);">NIGERIA</span></div>
+            <div><span style="color: var(--text-dim);">STATES:</span> <span style="color: var(--neon-blue);">36 + FCT</span></div>
+            <div><span style="color: var(--text-dim);">STATUS:</span> <span style="color: var(--neon-teal);">OPTIMAL</span></div>
+        </div>
+    </div>
+
+    <!-- Leaflet CSS & JS injected locally for the page scope -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        .map-wrapper {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+        }
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+        .state-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 5px;
+        }
+        .state-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .state-item:hover {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: var(--neon-blue);
+            transform: translateX(3px);
+        }
+        .state-item.active {
+            background: rgba(0, 255, 195, 0.1);
+            border-color: var(--neon-teal);
+        }
+        .state-name {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .state-minerals {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+        #leaflet-mineral-map {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--neon-blue);
+            background: #080a0f !important;
+        }
+        /* Leaflet popups customization to match glassmorphic style */
+        .leaflet-popup-content-wrapper {
+            background: rgba(8, 10, 15, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--neon-blue) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        }
+        .leaflet-popup-tip {
+            background: rgba(8, 10, 15, 0.95) !important;
+            border-left: 1px solid var(--neon-blue);
+            border-bottom: 1px solid var(--neon-blue);
+        }
+        .leaflet-popup-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--neon-blue);
+            font-size: 1.1rem;
+            margin: 0 0 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+        .leaflet-popup-content p {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .leaflet-container a.leaflet-popup-close-button {
+            color: white !important;
+        }
+    </style>
+
+    <div class="map-wrapper">
+        <!-- Sidebar Controls -->
+        <div class="glass-panel sidebar-panel" style="padding: 20px;">
+            <h3 style="color: var(--neon-teal); margin-top: 0; margin-bottom: 5px; font-size: 1.1rem;">
+                <i class="fas fa-search-location"></i> DISCOVERY CONSOLE
+            </h3>
+            
+            <!-- Filter Options -->
+            <div>
+                <label style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px;">Filter by Resource</label>
+                <select id="mineral-filter" class="cyber-input" style="width: 100%;" onchange="filterMap()">
+                    <option value="ALL">Show All Resources</option>
+                    <option value="Crude Oil">Crude Oil & Natural Gas</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Coal">Coal</option>
+                    <option value="Baryte">Baryte (Drilling Mud)</option>
+                    <option value="Limestone">Limestone (Well Casing)</option>
+                    <option value="Iron Ore">Iron Ore</option>
+                    <option value="Lead-Zinc">Lead-Zinc</option>
+                    <option value="Gypsum">Gypsum</option>
+                    <option value="Kaolin">Kaolin & Clay</option>
+                </select>
+            </div>
+
+            <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                <label style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px;">Search States</label>
+                <input type="text" id="state-search" class="cyber-input" style="width: 100%;" placeholder="Type State Name..." oninput="filterMap()">
+            </div>
+
+            <!-- Scrollable State List -->
+            <div class="state-list" id="state-list-container">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Interactive Map Container -->
+        <div class="glass-panel" style="padding: 0; position: relative; overflow: hidden;">
+            <div id="leaflet-mineral-map"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Complete database of Nigerian States and their mineral resources
+    const stateMineralData = [
+        { name: "Abia", lat: 5.4167, lng: 7.5000, minerals: ["Crude Oil", "Natural Gas", "Limestone", "Lead-Zinc", "Clay"], status: "Active Production", notes: "Significant oil & gas reserves combined with limestone deposits for cement manufacturing." },
+        { name: "Adamawa", lat: 9.3333, lng: 12.5000, minerals: ["Kaolin", "Gypsum", "Coal", "Baryte", "Marble"], status: "Exploration Phase", notes: "Contains significant deposits of industrial clays and gypsum blocks." },
+        { name: "Akwa Ibom", lat: 5.0000, lng: 7.8333, minerals: ["Crude Oil", "Natural Gas", "Coal", "Clay", "Silica Sand"], status: "Active Production", notes: "One of Nigeria's top crude oil producing states with rich marine sand reserves." },
+        { name: "Anambra", lat: 6.2000, lng: 7.0000, minerals: ["Crude Oil", "Natural Gas", "Coal", "Kaolin", "Iron Ore"], status: "Active Production", notes: "Home to the coal-rich Mamu formation and pioneer private natural gas facilities." },
+        { name: "Bauchi", lat: 10.3000, lng: 9.8333, minerals: ["Gold", "Coal", "Columbite", "Gypsum", "Limestone"], status: "Exploration Phase", notes: "Rich metallic and industrial mineral deposits distributed across the Yankari basin." },
+        { name: "Bayelsa", lat: 4.7500, lng: 6.0833, minerals: ["Crude Oil", "Natural Gas", "Silica Sand", "Clay"], status: "Active Production", notes: "Major oil producer in the core delta region with dense offshore and onshore fields." },
+        { name: "Benue", lat: 7.3333, lng: 8.7500, minerals: ["Baryte", "Coal", "Limestone", "Gypsum", "Lead-Zinc"], status: "Active Mining", notes: "Nigeria's primary source of oilfield-grade Baryte (essential weighting agent for drilling mud)." },
+        { name: "Borno", lat: 11.5000, lng: 13.0000, minerals: ["Diatomite", "Clay", "Limestone", "Gypsum", "Natural Gas"], status: "Exploration Phase", notes: "Frontier Chad Basin exploration target with verified diatomite reserves." },
+        { name: "Cross River", lat: 5.7500, lng: 8.5000, minerals: ["Limestone", "Baryte", "Lead-Zinc", "Gold", "Crude Oil"], status: "Active Mining", notes: "Vast limestone deposits feeding major cement hubs; notable Baryte reserves." },
+        { name: "Delta", lat: 5.5000, lng: 6.0000, minerals: ["Crude Oil", "Natural Gas", "Silica Sand", "Clay", "Lignite"], status: "Active Production", notes: "Major gas-to-power industry core with heavy crude pipelines and offshore platforms." },
+        { name: "Ebonyi", lat: 6.3000, lng: 8.0000, minerals: ["Lead-Zinc", "Salt", "Limestone", "Baryte", "Gypsum"], status: "Active Mining", notes: "Major salt lakes and high-grade lead-zinc mines operating in the Abakaliki fold belt." },
+        { name: "Edo", lat: 6.5000, lng: 6.0000, minerals: ["Crude Oil", "Natural Gas", "Limestone", "Marble", "Clay"], status: "Active Production", notes: "Extensive limestone quarries and gas processing units connected to the ELPS pipeline." },
+        { name: "Ekiti", lat: 7.6667, lng: 5.2500, minerals: ["Kaolin", "Feldspar", "Granite", "Tantalite"], status: "Exploration Phase", notes: "High-density feldspar and industrial granite formations." },
+        { name: "Enugu", lat: 6.5000, lng: 7.5000, minerals: ["Coal", "Limestone", "Iron Ore", "Silica Sand", "Clay"], status: "Historical Mining", notes: "Nigeria's historical coal capital with extensive sub-surface mining vaults." },
+        { name: "Gombe", lat: 10.2833, lng: 11.1667, minerals: ["Coal", "Gypsum", "Limestone", "Diatomite"], status: "Active Mining", notes: "Coal deposits supply local heavy cement kilns directly." },
+        { name: "Imo", lat: 5.4833, lng: 7.0333, minerals: ["Crude Oil", "Natural Gas", "Lead-Zinc", "Clay", "Limestone"], status: "Active Production", notes: "Onshore flowstations and high-quality ceramic clay reserves." },
+        { name: "Jigawa", lat: 12.0000, lng: 9.7500, minerals: ["Kaolin", "Tourmaline", "Amethyst", "Silica Sand"], status: "Artisanal Mining", notes: "Significant pegmatite veins containing precious tourmaline and amethyst gemstones." },
+        { name: "Kaduna", lat: 10.5167, lng: 7.4333, minerals: ["Gold", "Tantalite", "Tourmaline", "Iron Ore", "Kyanite"], status: "Active Mining", notes: "Host to major gold fields and Nigeria's primary kyanite deposits." },
+        { name: "Kano", lat: 12.0000, lng: 8.5167, minerals: ["Silica Sand", "Kaolin", "Lead-Zinc", "Copper Ore"], status: "Exploration Phase", notes: "Large deposits of industrial silica sands and base metal indicators." },
+        { name: "Katsina", lat: 12.2500, lng: 7.5000, minerals: ["Kaolin", "Marble", "Salt", "Asbestos"], status: "Exploration Phase", notes: "Extensive kaolinitic clay deposits suitable for paper and pharmaceutical fillers." },
+        { name: "Kebbi", lat: 11.5000, lng: 4.0000, minerals: ["Gold", "Clay", "Silica Sand", "Gypsum"], status: "Artisanal Mining", notes: "Rich alluvial gold deposits along the Niger River basin runoffs." },
+        { name: "Kogi", lat: 7.8000, lng: 6.7333, minerals: ["Iron Ore", "Coal", "Limestone", "Marble", "Dolomite"], status: "Active Mining", notes: "Home to the massive Itakpe Iron Ore reserves and extensive Obajana limestone quarries." },
+        { name: "Kwara", lat: 8.5000, lng: 5.0000, minerals: ["Feldspar", "Tantalite", "Gold", "Marble", "Columbite"], status: "Exploration Phase", notes: "Metamorphic rock zones yielding rich industrial feldspar and tantalite ore." },
+        { name: "Lagos", lat: 6.4500, lng: 3.4000, minerals: ["Silica Sand", "Clay", "Crude Oil", "Glass Sand"], status: "Active Production", notes: "Offshore Aje oilfield along the Dahomey basin; high-grade silica sand extraction." },
+        { name: "Nasarawa", lat: 8.5000, lng: 8.1667, minerals: ["Baryte", "Lead-Zinc", "Coal", "Tantalite", "Marble"], status: "Active Mining", notes: "High-specific gravity Baryte reserves utilized directly in oilfield drilling muds." },
+        { name: "Niger", lat: 10.0000, lng: 6.0000, minerals: ["Gold", "Talc", "Coal", "Iron Ore", "Lead-Zinc"], status: "Active Mining", notes: "Vast gold fields in the schist belt system; high-purity industrial talc reserves." },
+        { name: "Ogun", lat: 7.0000, lng: 3.5000, minerals: ["Limestone", "Kaolin", "Phosphate", "Clay", "Silica Sand"], status: "Active Mining", notes: "Nigeria's cement powerhouse, feeding major production hubs from limestone deposits." },
+        { name: "Ondo", lat: 7.1667, lng: 5.0500, minerals: ["Bitumen", "Crude Oil", "Natural Gas", "Silica Sand", "Clay"], status: "Exploration Phase", notes: "Contains one of the largest unexploited bitumen (tar sands) deposits in the world." },
+        { name: "Osun", lat: 7.5000, lng: 4.5000, minerals: ["Gold", "Feldspar", "Granite", "Talc"], status: "Active Mining", notes: "Primary site of commercial gold mining (Segilola Gold Project) in Southwestern Nigeria." },
+        { name: "Oyo", lat: 8.0000, lng: 4.0000, minerals: ["Gold", "Talc", "Marble", "Granite", "Gemstones"], status: "Artisanal Mining", notes: "High-grade tourmaline and aquamarine deposits alongside gold schist zones." },
+        { name: "Plateau", lat: 9.1667, lng: 9.7500, minerals: ["Tin", "Columbite", "Baryte", "Coal", "Lead-Zinc"], status: "Historical Mining", notes: "Nigeria's historic tin mining capital; extensive cassiterite tailing profiles." },
+        { name: "Rivers", lat: 4.7500, lng: 7.0000, minerals: ["Crude Oil", "Natural Gas", "Silica Sand", "Clay"], status: "Active Production", notes: "Central logistical and processing node for Nigeria's oil & gas exports." },
+        { name: "Sokoto", lat: 13.0833, lng: 5.2500, minerals: ["Limestone", "Gypsum", "Phosphate", "Clay"], status: "Active Mining", notes: "Phosphate rock reserves used for fertilizer production; limestone quarries." },
+        { name: "Taraba", lat: 8.0000, lng: 10.5000, minerals: ["Lead-Zinc", "Baryte", "Coal", "Gold", "Bauxite"], status: "Exploration Phase", notes: "Rich lead-zinc veins and high-grade baryte veins running through the Benue Valley." },
+        { name: "Yobe", lat: 12.0000, lng: 11.5000, minerals: ["Diatomite", "Gypsum", "Kaolin", "Soda Ash"], status: "Exploration Phase", notes: "Substantial industrial diatomite reserves used for filtration and abrasives." },
+        { name: "Zamfara", lat: 12.1667, lng: 6.6667, minerals: ["Gold", "Lead-Zinc", "Chromite", "Asbestos"], status: "Active Mining", notes: "High-density gold mineral veins; significant chromite deposits." }
+    ];
+
+    let mineralMap = null;
+    let markersList = [];
+
+    // Initialize Leaflet Map
+    function initMineralMap() {
+        // Destroy existing map if any
+        if (mineralMap) {
+            mineralMap.remove();
+        }
+
+        // Center on Nigeria
+        mineralMap = L.map('leaflet-mineral-map', {
+            center: [9.0820, 8.6753],
+            zoom: 6,
+            zoomControl: true,
+            attributionControl: false
+        });
+
+        // Dark Theme Map Tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 18
+        }).addTo(mineralMap);
+
+        // Populate Map with Markers
+        renderMarkers(stateMineralData);
+        populateList(stateMineralData);
+    }
+
+    function renderMarkers(data) {
+        // Clear old markers
+        markersList.forEach(m => mineralMap.removeLayer(m));
+        markersList = [];
+
+        data.forEach(state => {
+            // Determine custom marker color based on dominant mineral
+            let markerColor = "#00d4ff"; // Default Blue
+            if (state.minerals.includes("Crude Oil")) markerColor = "#FF5722"; // Red/Orange for oil
+            else if (state.minerals.includes("Gold")) markerColor = "#FFD700"; // Gold
+            else if (state.minerals.includes("Baryte")) markerColor = "#00ffc3"; // Teal
+            else if (state.minerals.includes("Coal")) markerColor = "#9c27b0"; // Purple
+
+            // Custom HTML div marker
+            const customIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: ${markerColor}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px ${markerColor};"></div>`,
+                iconSize: [14, 14],
+                iconAnchor: [7, 7]
+            });
+
+            // Create Popup HTML
+            const popupContent = `
+                <div>
+                    <h3>${state.name} State</h3>
+                    <p><strong>Minerals:</strong> ${state.minerals.join(', ')}</p>
+                    <p style="margin-top: 5px;"><strong>Status:</strong> <span style="color: #00ffc3;">${state.status}</span></p>
+                    <p style="margin-top: 5px; color: #a5b4fc; font-style: italic;">${state.notes}</p>
+                </div>
+            `;
+
+            const marker = L.marker([state.lat, state.lng], { icon: customIcon })
+                .bindPopup(popupContent)
+                .addTo(mineralMap);
+
+            marker.stateName = state.name;
+            markersList.push(marker);
+        });
+    }
+
+    function populateList(data) {
+        const container = document.getElementById('state-list-container');
+        container.innerHTML = "";
+
+        if (data.length === 0) {
+            container.innerHTML = `<div style="color: var(--text-dim); text-align: center; font-size: 0.8rem; margin-top: 20px;">No matching states found.</div>`;
+            return;
+        }
+
+        data.forEach(state => {
+            const item = document.createElement('div');
+            item.className = 'state-item';
+            item.onclick = () => selectState(state.name, state.lat, state.lng);
+            item.id = `state-item-${state.name.replace(/\s+/g, '-')}`;
+            
+            item.innerHTML = `
+                <div class="state-name">${state.name}</div>
+                <div class="state-minerals">
+                    <span style="color: var(--neon-blue); font-weight: bold;">Resources:</span> ${state.minerals.join(', ')}
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function selectState(name, lat, lng) {
+        // Zoom and fly to coordinate
+        mineralMap.flyTo([lat, lng], 8, {
+            animate: true,
+            duration: 1.2
+        });
+
+        // Open popup
+        const marker = markersList.find(m => m.stateName === name);
+        if (marker) {
+            setTimeout(() => {
+                marker.openPopup();
+            }, 1200);
+        }
+
+        // Highlight list item
+        document.querySelectorAll('.state-item').forEach(el => el.classList.remove('active'));
+        const activeItem = document.getElementById(`state-item-${name.replace(/\s+/g, '-')}`);
+        if (activeItem) {
+            activeItem.classList.add('active');
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    function filterMap() {
+        const filterVal = document.getElementById('mineral-filter').value;
+        const searchVal = document.getElementById('state-search').value.toLowerCase().trim();
+
+        const filteredData = stateMineralData.filter(state => {
+            const matchesSearch = state.name.toLowerCase().includes(searchVal);
+            
+            let matchesFilter = true;
+            if (filterVal !== "ALL") {
+                if (filterVal === "Crude Oil") {
+                    matchesFilter = state.minerals.includes("Crude Oil") || state.minerals.includes("Natural Gas");
+                } else if (filterVal === "Kaolin") {
+                    matchesFilter = state.minerals.includes("Kaolin") || state.minerals.includes("Clay");
+                } else {
+                    matchesFilter = state.minerals.includes(filterVal);
+                }
+            }
+
+            return matchesSearch && matchesFilter;
+        });
+
+        renderMarkers(filteredData);
+        populateList(filteredData);
+    }
+
+    // Default load triggers
+    setTimeout(() => {
+        initMineralMap();
+        
+        // Trigger resize event to ensure Leaflet renders container dimensions correctly
+        window.dispatchEvent(new Event('resize'));
+    }, 500);
+</script>
+创新思维

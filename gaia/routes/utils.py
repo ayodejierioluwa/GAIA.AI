@@ -46,6 +46,9 @@ TEMPLATE = r'''
                     <a href="/workshop/geospatial" class="nav-item" id="nav-geospatial">
                         <i class="fas fa-cubes"></i> <span>Geospatial Studio</span>
                     </a>
+                    <a href="/workshop/mineral-map" class="nav-item" id="nav-mineral-map">
+                        <i class="fas fa-map-marked-alt" style="color: #FF5722;"></i> <span>Mineral Resources Map</span>
+                    </a>
                     <a href="/workshop/mission-control" class="nav-item" id="nav-mission">
                         <i class="fas fa-chess-king" style="color: #FFD700;"></i> <span>Mission Control</span>
                     </a>
@@ -442,6 +445,7 @@ TEMPLATE = r'''
                     <div style="padding: 10px; font-size: 0.7rem; color: var(--text-dim);">Navigate to:</div>
                     <div class="nav-item" onclick="location.href='/workshop/dashboard'" style="padding: 10px; cursor: pointer;"><i class="fas fa-brain"></i> Neural Thought Stream</div>
                     <div class="nav-item" onclick="location.href='/workshop/geospatial'" style="padding: 10px; cursor: pointer;"><i class="fas fa-cubes"></i> Geospatial Studio</div>
+                    <div class="nav-item" onclick="location.href='/workshop/mineral-map'" style="padding: 10px; cursor: pointer;"><i class="fas fa-map-marked-alt"></i> Mineral Resources Map</div>
                 `;
             });
         });
